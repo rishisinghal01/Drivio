@@ -2,7 +2,7 @@
 import React from 'react'
 import { motion, scale } from "motion/react"
 import { Bike, Bus, Car, Truck } from 'lucide-react';
-function HeroSection() {
+function HeroSection({onauthrequired}:{onauthrequired:()=>void}) {
   return (
     <div className='relative min-h-screen w-full overflow-hidden'>
 
@@ -47,6 +47,7 @@ function HeroSection() {
            whileTap={{scale:0.95}}
            
             className="mt-12 px-10 p-4 bg-white text-black rounded-full font-semibold shadow-xl"
+            onClick={onauthrequired}
         >
           Book Now
         </motion.button>

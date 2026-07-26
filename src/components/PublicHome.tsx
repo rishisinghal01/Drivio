@@ -8,7 +8,7 @@ function PublicHome() {
   const [authOpen, setauthOpen] = useState(false);
   return (
     <div>
-    <HeroSection/>
+    <HeroSection onauthrequired={()=>setauthOpen(true)}/>
     <VehicleSlider/>
     <AuthModel open ={authOpen} onclose={()=>setauthOpen(false)}/>
 
