@@ -21,13 +21,26 @@ function AuthModel({ open, onclose }: propType) {
   const [password, setpassword] = useState("")
   const [loading, setloading] = useState(false);
   const [err, seterr] = useState("")
+  const [otp, setotp] = useState(["","","","","",""])
 
-  const {data} = useSession();
-  console.log(data);
   const handlesignup = async () => {
     setloading(true);
     try {
       const { data } = await axios.post("/api/auth/register", { name, email, password })
+      setstep("otp")
+      setloading(false);
+  
+    } catch (error:any) {
+      console.log(error);
+      setloading(false);
+      seterr(error.response.data.message);
+    }
+  }
+  const handleverify = async () => {
+    setloading(true);
+    try {
+      const { data } = await axios.post("/api/auth/verify-email", { email, otp:otp.join("") })
+      setstep("login")
       console.log(data);
       setloading(false);
   
@@ -48,6 +61,25 @@ function AuthModel({ open, onclose }: propType) {
     console.log(error)
     setloading(false);
    }
+  }
+
+  const handlechangeotp =(index:number,value:string)=>{
+    if(!/^[0-9]?$/.test(value)) return
+
+    const updated = [...otp]
+    updated[index] = value;
+    setotp(updated);
+
+    if(value && index <otp.length-1){
+(document.getElementById(`otp-${index + 1}`) as HTMLInputElement)?.focus();  
+  }
+  if(!value && index>0){
+    (document.getElementById(`otp-${index - 1}`) as HTMLInputElement)?.focus();  
+
+  }
+
+
+
   }
 
   const handlegooglelogin = async ()=>{
@@ -168,7 +200,7 @@ function AuthModel({ open, onclose }: propType) {
                           disabled={loading}
                         >
                           {!loading ? (
-                            "Sign Up"
+                            "Send Otp"
                           ) : (
                             <CircleDashed
                               size={18}
@@ -180,6 +212,34 @@ function AuthModel({ open, onclose }: propType) {
                       </div>
 
                       <p className='mt-6 text-center text-sm text-gray-500 '>Already have an account? <div className='text-black font-medium hover:underline ' onClick={() => setstep("login")}>Login</div> </p>
+                    </motion.div>
+                  )}
+
+                  {step=="otp" &&(
+                    <motion.div
+                    
+                    key = "otp"
+                    initial={{opacity:0,x:20}}
+                    animate={{opacity:1,x:0}}
+                    exit={{opacity:0,x:-20}}
+
+                    >
+
+                      <h2 className='text-xl font-semibold'>Verify Email</h2>
+                      <div className='mt-6 flex justify-center gap-2'>
+                      {otp.map((digit,i)=>{
+                        return <input
+                        key={i}
+                        id={`otp-${i}`}
+                        value={digit}
+                        maxLength={1}
+                        className='w-10 h-12 sm:w-12 text-center text-lg font-semibold rounded-xl bg-white border border-black/20 outline-none'
+                         type='text' onChange={(e)=>handlechangeotp(i,e.target.value)}/>
+
+                      })}
+                      </div>
+                      <button className='mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition' onClick={handleverify}>Verify and Create Account</button>
+
                     </motion.div>
                   )}
                 </div>
