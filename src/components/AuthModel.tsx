@@ -22,12 +22,14 @@ function AuthModel({ open, onclose }: propType) {
   const [loading, setloading] = useState(false);
   const [err, seterr] = useState("")
   const [otp, setotp] = useState(["","","","","",""])
-
+const session = useSession();
+console.log(session);
   const handlesignup = async () => {
     setloading(true);
     try {
       const { data } = await axios.post("/api/auth/register", { name, email, password })
       setstep("otp")
+      seterr("");
       setloading(false);
   
     } catch (error:any) {
@@ -42,6 +44,8 @@ function AuthModel({ open, onclose }: propType) {
       const { data } = await axios.post("/api/auth/verify-email", { email, otp:otp.join("") })
       setstep("login")
       console.log(data);
+      setotp(["","","","","",""]);
+      seterr("");
       setloading(false);
   
     } catch (error:any) {
@@ -238,7 +242,19 @@ function AuthModel({ open, onclose }: propType) {
 
                       })}
                       </div>
-                      <button className='mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition' onClick={handleverify}>Verify and Create Account</button>
+                                              {err && <p className='text-red-500 text-center'>*{err}</p>}
+
+                      <button className='mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition flex justify-center items-center' onClick={handleverify}>
+                           {!loading ? (
+                            "Verify and Create Account"
+                          ) : (
+                            <CircleDashed
+                              size={18}
+                              color="white"
+                              className="animate-spin "
+                            />
+                          )}
+                      </button>
 
                     </motion.div>
                   )}

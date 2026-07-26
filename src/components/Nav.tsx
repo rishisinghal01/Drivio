@@ -23,7 +23,7 @@ function Nav() {
     <div className='max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between'>
      <Image src={'/logo.png'} alt="logo" width={44} height={44} priority/>
        <div className='hidden md:flex items-center gap-10'>
-      {nav_items.map((item,idx)=>{
+      {nav_items.map((item,idx)=> {
         let hfre;
         if(item =="Home"){
          hfre = '/' 
