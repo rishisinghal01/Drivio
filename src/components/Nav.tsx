@@ -1,53 +1,121 @@
 "use client";
 import React, { useState } from 'react'
-import {motion} from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import Image from 'next/image'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import path from 'path';
 import AuthModel from './AuthModel';
-const nav_items = ["Home","Bookings","About Us","Contact"]
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { button } from 'motion/react-client';
+import { Bike, Car, ChevronRight, LogOut, Truck } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+import { setUserData } from '@/redux/userSlice';
+const nav_items = ["Home", "Bookings", "About Us", "Contact"]
 function Nav() {
-  const pathname  = usePathname();
+  const pathname = usePathname();
   const [authOpen, setauthOpen] = useState(false);
+  const [profileopen, setprofileopen] = useState(false)
+  const {userData} = useSelector((state:RootState)=>state.user)
+  const dispatch = useDispatch<AppDispatch>();
+  const handlelogout = async  ()=>{
+    await signOut({redirect:false});
+    dispatch(setUserData(null));
+    setprofileopen(false);
+    
+  }
   return (
     <>
       <motion.div
-     initial={{y:-60,opacity:0}}
+        initial={{ y: -60, opacity: 0 }}
 
-     animate={{y:0 ,opacity:1}}
-     className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0b0b0b] text-white shadow-[0_15px_50px_rgba(0,0,0,0.7)] py-3`}
-    
-    
-    >
-    <div className='max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between'>
-     <Image src={'/logo.png'} alt="logo" width={44} height={44} priority/>
-       <div className='hidden md:flex items-center gap-10'>
-      {nav_items.map((item,idx)=> {
-        let hfre;
-        if(item =="Home"){
-         hfre = '/' 
-        }
-        else{
-         hfre = `/${item.toLowerCase()}`;
+        animate={{ y: 0, opacity: 1 }}
+        className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0b0b0b] text-white shadow-[0_15px_50px_rgba(0,0,0,0.7)] py-3`}
 
-        }
-        const active = hfre ==pathname
-        return <Link key={idx} href={hfre} className={`text-sm font-medium transition ${active?"text-white":"text-gray-400 hover:text-white"}`}>{item}</Link>
-      })}
-    </div>
 
-    <button className='px-4 py-1.5 rounded-full bg-white text-black text-sm' onClick={()=>setauthOpen(true)}>Login</button>
-    </div>
+      >
+        <div className='max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between'>
+          <Image src={'/logo.png'} alt="logo" width={44} height={44} priority />
+          <div className='hidden md:flex items-center gap-10'>
+            {nav_items.map((item, idx) => {
+              let hfre;
+              if (item == "Home") {
+                hfre = '/'
+              }
+              else {
+                hfre = `/${item.toLowerCase()}`;
 
-  
-  
+              }
+              const active = hfre == pathname
+              return <Link key={idx} href={hfre} className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}>{item}</Link>
+            })}
+          </div>
 
-    </motion.div>
-    <AuthModel open={authOpen} onclose={()=>setauthOpen(false)}/>
+          <div className='flex items-center gap-3 relative'>
+              <div className='hidden md:block relative'>
+                {!userData?(
+                              <button className='px-4 py-1.5 rounded-full bg-white text-black text-sm' onClick={() => setauthOpen(true)}>Login</button>
+
+                ):(
+                  <>
+                  
+                  <button className='w-11 h-11 rounded-full bg-white text-black font-bold' onClick={()=>setprofileopen(!profileopen)}>{userData.name.charAt(0).toUpperCase()}</button>
+                   <AnimatePresence>
+                    {profileopen &&(
+                      <motion.div
+                      initial={{opacity:0,y:-10}}
+                      animate={{opacity:1,y:0}}
+                      className='absolute top-14 right-0 w-[300px] bg-white text-black rounded-2xl shadow-xl border'
+                      >
+                      <div className='p-5'>
+                        <p className='font-semibold text-lg'>{userData.name}</p>
+                        <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
+                       {userData.role!="partner" && (
+                      <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'>
+                        <div className='flex -space-x-2'>
+                          <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                          <Bike size={16}/>
+
+                          </div>
+                          <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                          <Car size={16}/>
+
+                          </div>
+                          <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                          <Truck size={16}/>
+
+                          </div>
+                        </div>
+                  Become a Partner
+                  <ChevronRight size={16} className='ml-auto'/>
+                      </div>
+                  
+                       )}
+                       <button className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2' onClick={handlelogout}>
+                        <LogOut size={16}/>
+                        LogOut
+                       </button>
+                      </div>
+
+
+                      </motion.div>
+                    )}
+                   </AnimatePresence>
+                  </>
+                )}
+              </div>
+          </div>
+        </div>
+
+
+
+
+      </motion.div>
+      <AuthModel open={authOpen} onclose={() => setauthOpen(false)} />
 
     </>
-  
+
   )
 }
 
