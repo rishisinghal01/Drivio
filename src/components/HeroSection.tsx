@@ -2,7 +2,14 @@
 import React from 'react'
 import { motion, scale } from "motion/react"
 import { Bike, Bus, Car, Truck } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { useRouter } from 'next/navigation';
+
+
 function HeroSection({onauthrequired}:{onauthrequired:()=>void}) {
+  const {userData} = useSelector((state:RootState)=>state.user)
+  const router = useRouter();
   return (
     <div className='relative min-h-screen w-full overflow-hidden'>
 
@@ -47,7 +54,7 @@ function HeroSection({onauthrequired}:{onauthrequired:()=>void}) {
            whileTap={{scale:0.95}}
            
             className="mt-12 px-10 p-4 bg-white text-black rounded-full font-semibold shadow-xl"
-            onClick={onauthrequired}
+            onClick={()=>{!userData?onauthrequired():router.push("/user/book")}}
         >
           Book Now
         </motion.button>

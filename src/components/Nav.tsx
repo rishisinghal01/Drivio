@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
 import Image from 'next/image'
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import path from 'path';
 import AuthModel from './AuthModel';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ function Nav() {
     setprofileopen(false);
 
   }
+  const router = useRouter(); 
   return (
     <>
       <motion.div
@@ -73,7 +74,7 @@ function Nav() {
                           <p className='font-semibold text-lg'>{userData.name}</p>
                           <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
                           {userData.role != "partner" && (
-                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'>
+                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl' onClick={()=>router.push("/partner/onboarding/vehicle")} >
                               <div className='flex -space-x-2'>
                                 <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                                   <Bike size={16} />
@@ -202,7 +203,9 @@ function Nav() {
                 <p className='font-semibold text-lg'>{userData.name}</p>
                 <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
                 {userData.role != "partner" && (
-                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'>
+                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl' onClick={()=>{router.push("/partner/onboarding/vehicle")
+                    console.log("clicked")
+                  }}>
                     <div className='flex -space-x-2'>
                       <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                         <Bike size={16} />
