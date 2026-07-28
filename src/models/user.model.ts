@@ -1,14 +1,18 @@
 import mongoose, { Document } from "mongoose";
+import { number } from "motion";
 export interface IUser extends Document{
     name:string,
     email:string,
     password?:string,
-    createdAt:Date,
-    updatedAt:Date,
+   
     role:"user" | "partner" | "admin",
     isEmailVerified:boolean,
     otp:string,
     otpExpires:Date,
+    partnerOnboardingStep:number,
+    mobileNumber:string,
+     createdAt:Date,
+    updatedAt:Date,
 
 }
 const userSchema = new mongoose.Schema<IUser>({
@@ -39,6 +43,16 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   otpExpires:{
     type:Date
+  },
+  partnerOnboardingStep:{
+    type:Number,
+    max:8,
+    min:0,
+    default:0
+  },
+  mobileNumber:{
+    type:String,
+    
   }
 
 
