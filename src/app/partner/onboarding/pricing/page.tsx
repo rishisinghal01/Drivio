@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CircleDashed, UploadCloud, FileCheck, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -14,25 +14,6 @@ export default function PricingPage() {
     const [pricePerkm, setPricePerKm] = useState("");
     const [waitingCharge, setWaitingCharge] = useState("");
     const [photo, setPhoto] = useState<File | null>(null);
-    const [pageLoading, setPageLoading] = useState(true);
-
-    useEffect(() => {
-        const checkStatus = async () => {
-            try {
-                const { data } = await axios.get("/api/partner/status");
-                if (data.step < 6) {
-                    router.push("/partner/onboarding/status");
-                } else {
-                    setPageLoading(false);
-                }
-            } catch (error) {
-                router.push("/partner/onboarding/status");
-            }
-        };
-        checkStatus();
-    }, [router]);
-
-    if (pageLoading) return <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>;
 
     const handleSubmit = async () => {
         setLoading(true);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CircleDashed, FileCheck, Upload, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,25 +16,6 @@ function Page() {
         license: null,
         rc: null
     })
-    const [pageLoading, setPageLoading] = useState(true);
-
-    useEffect(() => {
-        const checkStatus = async () => {
-            try {
-                const { data } = await axios.get("/api/partner/status");
-                if (data.step < 1) {
-                    router.push("/partner/onboarding/vehicle");
-                } else {
-                    setPageLoading(false);
-                }
-            } catch (error) {
-                router.push("/partner/onboarding/vehicle");
-            }
-        };
-        checkStatus();
-    }, [router]);
-
-    if (pageLoading) return <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>;
 
    const handleDocs = async ()=>{
     setloading(true);

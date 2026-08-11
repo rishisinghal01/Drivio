@@ -148,7 +148,7 @@ onClick={()=>scroll("right")}
                       animate={{
                         backgroundColor: isHovered ? "rgba(255,255,255,0.12)" : "#f4f4f5",
                         color: isHovered ? "#ffffff" : "#71717a",
-                        borderColor: isHovered ? "rgba(255,255,255,0.15)" : "e4e4e7",
+                        borderColor: isHovered ? "rgba(255,255,255,0.15)" : "#e4e4e7",
 
                       }}
                       className='inline-flex items-center gap-1.5 border text-[9px] font-black uppercase tracking-[0.18em] px-2.5 py-1.5 rounded-full mb-5 transition-colors'

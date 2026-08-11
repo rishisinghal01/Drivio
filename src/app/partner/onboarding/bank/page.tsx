@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import {
@@ -23,25 +23,6 @@ function Page() {
   const [ifsc, setifsc] = useState("");
   const [upi, setupi] = useState("");
   const [mobilenumber, setmobilenumber] = useState("");
-  const [pageLoading, setPageLoading] = useState(true);
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const { data } = await axios.get("/api/partner/status");
-        if (data.step < 2) {
-          router.push("/partner/onboarding/documents");
-        } else {
-          setPageLoading(false);
-        }
-      } catch (error) {
-        router.push("/partner/onboarding/vehicle");
-      }
-    };
-    checkStatus();
-  }, [router]);
-
-  if (pageLoading) return <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>;
  
   const handleBank=async()=>{
     setloading(true);

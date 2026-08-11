@@ -37,6 +37,36 @@ export async function proxy(req:NextRequest) {
 
     if(pathname.startsWith("/partner")){
         if(pathname.startsWith("/partner/onboarding")){
+            if (pathname === '/partner/onboarding/status' || pathname === '/partner/onboarding/vehicle') {
+                return NextResponse.next();
+            }
+
+            try {
+                const res = await fetch(new URL('/api/partner/status', req.url), {
+                    headers: {
+                        Cookie: req.headers.get('cookie') || ''
+                    }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    const step = data.step;
+                    
+                    if (pathname === '/partner/onboarding/documents' && step < 1) {
+                        return NextResponse.redirect(new URL('/partner/onboarding/vehicle', req.url));
+                    }
+                    if (pathname === '/partner/onboarding/bank' && step < 2) {
+                        return NextResponse.redirect(new URL('/partner/onboarding/documents', req.url));
+                    }
+                    if (pathname === '/partner/onboarding/pricing' && step < 6) {
+                        return NextResponse.redirect(new URL('/partner/onboarding/status', req.url));
+                    }
+                } else {
+                     return NextResponse.redirect(new URL('/partner/onboarding/vehicle', req.url));
+                }
+            } catch (e) {
+                console.error("Proxy fetch error", e);
+            }
             return NextResponse.next();
         }
        if(role !="partner"){
