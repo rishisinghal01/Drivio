@@ -26,6 +26,7 @@ export interface IRide extends Document {
     razorpayPaymentId?: string;
     adminCommission?: number;
     partnerEarnings?: number;
+    otp?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -59,7 +60,8 @@ const rideSchema = new Schema<IRide>({
     razorpayOrderId: { type: String },
     razorpayPaymentId: { type: String },
     adminCommission: { type: Number, default: 0 },
-    partnerEarnings: { type: Number, default: 0 }
+    partnerEarnings: { type: Number, default: 0 },
+    otp: { type: String }
 }, { timestamps: true });
 
 const Ride = mongoose.models.Ride || mongoose.model<IRide>("Ride", rideSchema);

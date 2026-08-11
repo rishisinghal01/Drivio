@@ -73,7 +73,7 @@ function MapUpdater({ pickupLat, pickupLng, dropLat, dropLng, partnerLat, partne
         if (partnerLat && partnerLng) {
            bounds.extend([partnerLat, partnerLng]);
         }
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(bounds, { paddingBottomRight: [50, 350], paddingTopLeft: [50, 100] });
         initialized.current = true;
       } else if (pickupLat && pickupLng && dropLat && dropLng) {
         const bounds = L.latLngBounds([
@@ -83,7 +83,7 @@ function MapUpdater({ pickupLat, pickupLng, dropLat, dropLng, partnerLat, partne
         if (partnerLat && partnerLng) {
            bounds.extend([partnerLat, partnerLng]);
         }
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(bounds, { paddingBottomRight: [50, 350], paddingTopLeft: [50, 100] });
         initialized.current = true;
       } else if (pickupLat && pickupLng) {
         map.setView([pickupLat, pickupLng], 14);
@@ -110,7 +110,6 @@ export default function Map({ pickupLat, pickupLng, dropLat, dropLng, partnerLat
         center={defaultCenter} 
         zoom={12} 
         style={{ width: '100%', height: '100%' }}
-        zoomControl={false}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"

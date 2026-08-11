@@ -12,10 +12,12 @@ export async function GET(req: NextRequest) {
 
     await connectDb();
 
-    // Find pending rides specifically requested for this partner
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+
     const pendingRides = await Ride.find({ 
-        partner: session.user.id, 
-        status: "pending" 
+        $or: [{ partner: session.user.id }, { partner: null }],
+        status: "pending",
+        createdAt: { $gte: fifteenMinutesAgo }
     }).populate('user', 'name mobileNumber').sort({ createdAt: -1 });
 
     return NextResponse.json({ success: true, data: pendingRides }, { status: 200 });

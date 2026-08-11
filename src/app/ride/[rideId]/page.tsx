@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -74,8 +75,8 @@ export default function UserRideTracking() {
   }
 
   return (
-    <div className="h-screen w-full md:max-w-md md:mx-auto md:border-x md:shadow-2xl relative bg-gray-100 flex flex-col overflow-hidden font-sans">
-      
+    <div className="h-screen w-full relative bg-gray-100 flex flex-col overflow-hidden font-sans">
+      <Sidebar role="user" />
       {/* Live Map Background */}
       <div className="absolute inset-0 z-0">
         <Map 
@@ -89,12 +90,19 @@ export default function UserRideTracking() {
         />
       </div>
 
-      {/* Floating Status Pill */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10">
+      {/* Floating Status Pill & OTP */}
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
          <div className="bg-white rounded-full px-5 py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.1)] flex items-center gap-2 text-sm font-bold text-gray-800">
              <div className={`w-2.5 h-2.5 rounded-full ${ride.status === 'accepted' ? 'bg-green-500 animate-pulse' : 'bg-blue-500'}`}></div>
-             {ride.status === 'accepted' ? "Driver on the Way" : "Heading to Drop"}
+             {ride.status === 'accepted' ? "Driver on the Way" : ride.status === 'pending' ? "Finding Driver" : "Heading to Drop"}
          </div>
+         
+         {(ride.status === 'accepted' || ride.status === 'pending') && ride.otp && (
+            <div className="bg-black text-white px-4 py-2 rounded-xl shadow-lg font-bold tracking-widest flex items-center gap-2">
+                <span className="text-[10px] text-gray-400 uppercase tracking-widest">OTP</span>
+                <span className="text-xl">{ride.otp}</span>
+            </div>
+         )}
       </div>
 
       {/* Bottom Information Card */}
@@ -162,12 +170,12 @@ export default function UserRideTracking() {
 
          {/* Action Buttons */}
          <div className="flex gap-3 mb-4">
-            <button className="flex-1 bg-white border-2 border-gray-200 text-gray-900 rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition">
+            <a href={`tel:${ride.partner?.mobileNumber || ''}`} className="flex-1 bg-white border-2 border-gray-200 text-gray-900 rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition">
                <Phone size={16} /> Call
-            </button>
-            <button className="flex-1 bg-[#111111] text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black transition">
+            </a>
+            <a href={`sms:${ride.partner?.mobileNumber || ''}`} className="flex-1 bg-[#111111] text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black transition">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Message
-            </button>
+            </a>
          </div>
 
          {/* Timeline */}
@@ -188,9 +196,21 @@ export default function UserRideTracking() {
          </div>
 
          {/* Cancel Button */}
-         <button className="w-full py-3.5 text-red-500 font-bold hover:bg-red-50 rounded-xl transition">
-             Cancel Ride
-         </button>
+         {ride.status === 'pending' || ride.status === 'accepted' ? (
+             <button 
+                onClick={async () => {
+                   if (confirm("Are you sure you want to cancel this ride?")) {
+                       try {
+                           await axios.post(`/api/rides/${rideId}/status`, { status: 'cancelled' });
+                           router.push('/');
+                       } catch (e) { alert("Failed to cancel ride"); }
+                   }
+                }}
+                className="w-full py-3.5 text-red-500 font-bold hover:bg-red-50 rounded-xl transition"
+             >
+                 Cancel Ride
+             </button>
+         ) : null}
       </div>
     </div>
   );

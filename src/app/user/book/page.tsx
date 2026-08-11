@@ -87,7 +87,7 @@ export default function BookRidePage() {
   };
 
   return (
-    <div className="h-screen w-full relative bg-gray-100 flex flex-col md:flex-row overflow-hidden font-sans">
+    <div className="h-screen w-full relative bg-gray-100 flex flex-col overflow-hidden font-sans">
       
       {/* MAP BACKGROUND - Only visible in Step 2 */}
       {step === 2 && (
@@ -178,14 +178,14 @@ export default function BookRidePage() {
       {step === 2 && (
         <AvailableRides 
           vehicleType={selectedVehicle}
-          partners={availablePartners}
-          pickupName={pickupLocation?.display_name.split(',')[0]}
-          dropName={dropLocation?.display_name.split(',')[0]}
+          partners={availablePartners || []}
+          pickupName={pickupLocation?.display_name?.split(',')[0] || "Pickup"}
+          dropName={dropLocation?.display_name?.split(',')[0] || "Drop"}
           fare={fare}
-          pickupLat={parseFloat(pickupLocation.lat)}
-          pickupLng={parseFloat(pickupLocation.lon)}
-          dropLat={parseFloat(dropLocation.lat)}
-          dropLng={parseFloat(dropLocation.lon)}
+          pickupLat={pickupLocation?.lat ? parseFloat(pickupLocation.lat) : 0}
+          pickupLng={pickupLocation?.lon ? parseFloat(pickupLocation.lon) : 0}
+          dropLat={dropLocation?.lat ? parseFloat(dropLocation.lat) : 0}
+          dropLng={dropLocation?.lon ? parseFloat(dropLocation.lon) : 0}
         />
       )}
       

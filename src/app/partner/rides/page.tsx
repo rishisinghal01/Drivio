@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
-import { MapPin, Navigation, Clock, Power } from 'lucide-react';
+import { MapPin, Navigation, Clock, Power, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -66,7 +67,8 @@ export default function PartnerDashboard() {
   const activeRequest = requests.length > 0 ? requests[0] : null;
 
   return (
-    <div className="h-screen w-full relative bg-gray-100 flex flex-col overflow-hidden font-sans">
+    <div className="h-screen w-full md:max-w-md md:mx-auto md:border-x md:shadow-2xl relative bg-gray-100 flex flex-col overflow-hidden font-sans">
+      <Sidebar role="partner" />
       
       {/* MAP BACKGROUND */}
       <div className="absolute inset-0 z-0">

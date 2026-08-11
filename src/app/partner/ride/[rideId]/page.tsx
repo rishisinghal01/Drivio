@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
-import { MapPin, Navigation, Phone, Navigation2 } from 'lucide-react';
+import { MapPin, Navigation, Phone, CheckCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -15,22 +16,29 @@ export default function PartnerRideTracking() {
   const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [etaMin, setEtaMin] = useState<number | null>(null);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpInput, setOtpInput] = useState("");
+  const [hasArrived, setHasArrived] = useState(false);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationIndex, setSimulationIndex] = useState(0);
 
   // Fetch ride details
   useEffect(() => {
-    const fetchStatus = async () => {
+    const fetchRide = async () => {
       try {
         const res = await axios.get(`/api/rides/${rideId}/status`);
         if (res.data.success) {
           setRide(res.data.data);
-          setRide(res.data.data);
+          if (res.data.data.driverLocation?.lat) {
+             setCurrentLocation(res.data.data.driverLocation);
+          }
         }
       } catch (error) {
-        console.error("Failed to fetch ride status", error);
+        console.error("Failed to fetch ride", error);
       }
     };
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
+    fetchRide();
+    const interval = setInterval(fetchRide, 5000);
     return () => clearInterval(interval);
   }, [rideId]);
 
@@ -91,11 +99,52 @@ export default function PartnerRideTracking() {
     return () => {
       if (watchId) navigator.geolocation.clearWatch(watchId);
     };
-  }, [rideId]);
+  }, [rideId, isSimulating]);
+
+  // Simulator Effect (Follows the exact road route)
+  useEffect(() => {
+    if (!isSimulating || !routeCoords || routeCoords.length === 0) return;
+    
+    const interval = setInterval(() => {
+        setSimulationIndex(prev => {
+            // Move forward by 2 coordinate points on the path each tick
+            const nextIndex = prev + 2; 
+            
+            // If we reached the end of the route
+            if (nextIndex >= routeCoords.length) {
+                setIsSimulating(false);
+                return prev;
+            }
+            
+            const nextCoord = routeCoords[nextIndex];
+            // routeCoords is [lat, lng]
+            const newLat = nextCoord[0];
+            const newLng = nextCoord[1];
+            
+            setCurrentLocation({ lat: newLat, lng: newLng });
+            
+            // Broadcast location to backend
+            axios.post(`/api/rides/${rideId}/location`, { lat: newLat, lng: newLng }).catch(() => {});
+            
+            return nextIndex;
+        });
+    }, 1500); // update every 1.5s for smoother animation
+    
+    return () => clearInterval(interval);
+  }, [isSimulating, routeCoords, rideId]);
 
   const handleRideAction = async () => {
+    if (ride.status === 'accepted') {
+        if (!hasArrived) {
+            setHasArrived(true);
+        } else {
+            setShowOtpModal(true);
+        }
+        return;
+    }
+    
     try {
-      const newStatus = ride.status === 'accepted' ? 'ongoing' : 'completed';
+      const newStatus = 'completed';
       const res = await axios.post(`/api/rides/${rideId}/status`, { status: newStatus });
       if (res.data.success) {
         if (newStatus === 'completed') {
@@ -111,13 +160,31 @@ export default function PartnerRideTracking() {
     }
   };
 
+  const verifyOtpAndStartRide = async () => {
+    if (otpInput !== ride.otp) {
+        alert("Invalid OTP! Please ask the user for the correct OTP.");
+        return;
+    }
+
+    try {
+      const res = await axios.post(`/api/rides/${rideId}/status`, { status: 'ongoing' });
+      if (res.data.success) {
+        setRide(res.data.data);
+        setShowOtpModal(false);
+      }
+    } catch (error) {
+      console.error("Error starting ride", error);
+      alert("Failed to start ride");
+    }
+  };
+
   if (!ride) {
-    return <div className="h-screen flex items-center justify-center bg-gray-50">Loading ride data...</div>;
+    return <div className="h-screen flex flex-col items-center justify-center bg-gray-50"><div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div><p className="font-bold text-gray-500 uppercase tracking-widest text-xs">Loading Ride...</p></div>;
   }
 
   return (
-    <div className="h-screen w-full md:max-w-md md:mx-auto md:border-x md:shadow-2xl relative bg-gray-100 flex flex-col overflow-hidden font-sans">
-      
+    <div className="h-screen w-full relative bg-gray-100 flex flex-col overflow-hidden font-sans">
+      <Sidebar role="partner" />
       {/* Live Map Background */}
       <div className="absolute inset-0 z-0">
         <Map 
@@ -132,11 +199,38 @@ export default function PartnerRideTracking() {
       </div>
 
       {/* Floating Status Pill */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10">
-         <div className="bg-white rounded-full px-5 py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.1)] flex items-center gap-2 text-sm font-bold text-gray-800">
-             <div className={`w-2.5 h-2.5 rounded-full ${ride.status === 'accepted' ? 'bg-yellow-500 animate-pulse' : 'bg-blue-500'}`}></div>
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 w-full px-4">
+         <div className="bg-white rounded-full px-5 py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.1)] flex items-center gap-2 text-sm font-bold text-gray-800 shrink-0">
+             <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></div>
              {ride.status === 'accepted' ? "Heading to Pickup" : "Heading to Drop"}
          </div>
+         
+         {!currentLocation && (
+             <div className="flex flex-col items-center gap-2 mt-2">
+                 <div className="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                     Location Blocked or Unavailable
+                 </div>
+                 <button 
+                    onClick={() => {
+                        if (ride?.pickup) {
+                            setCurrentLocation({ lat: ride.pickup.lat, lng: ride.pickup.lng });
+                            axios.post(`/api/rides/${rideId}/location`, { lat: ride.pickup.lat, lng: ride.pickup.lng }).catch(() => {});
+                        }
+                    }}
+                    className="bg-black text-white text-xs font-bold px-4 py-2 rounded-lg shadow-lg hover:bg-gray-800 transition"
+                 >
+                     📍 Mock GPS for Testing
+                 </button>
+             </div>
+         )}
+         {currentLocation && (
+             <button 
+                 onClick={() => setIsSimulating(!isSimulating)}
+                 className={`text-[10px] font-bold px-3 py-1 rounded-full shadow-lg transition mt-2 ${isSimulating ? 'bg-green-500 text-white animate-pulse' : 'bg-gray-200 text-gray-700'}`}
+             >
+                 {isSimulating ? '🚗 Simulating Driving...' : '▶️ Simulate Driving'}
+             </button>
+         )}
       </div>
 
       {/* Bottom Information Card */}
@@ -201,12 +295,12 @@ export default function PartnerRideTracking() {
 
          {/* Action Buttons */}
          <div className="flex gap-3 mb-4">
-            <button className="flex-1 bg-white border-2 border-gray-200 text-gray-900 rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition">
+            <a href={`tel:${ride.user?.mobileNumber || ''}`} className="flex-1 bg-white border-2 border-gray-200 text-gray-900 rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition">
                <Phone size={16} /> Call
-            </button>
-            <button className="flex-1 bg-[#111111] text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black transition">
+            </a>
+            <a href={`sms:${ride.user?.mobileNumber || ''}`} className="flex-1 bg-[#111111] text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black transition">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Message
-            </button>
+            </a>
          </div>
 
          {/* Vehicle Badge */}
@@ -250,9 +344,33 @@ export default function PartnerRideTracking() {
            className="w-full bg-[#111111] text-white rounded-xl py-3.5 font-bold text-lg shadow-lg hover:bg-black transition flex items-center justify-center gap-2"
          >
              <MapPin size={20} />
-             {ride.status === 'accepted' ? "I've Arrived at Pickup →" : "Complete Ride →"}
+             {ride.status === 'accepted' ? (hasArrived ? "Enter OTP to Start Ride →" : "I've Arrived at Pickup →") : "Complete Ride →"}
          </button>
       </div>
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className="absolute inset-0 z-[2000] flex items-end justify-center bg-black/60 p-4">
+            <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Enter OTP</h3>
+                <p className="text-gray-500 text-sm mb-6">Ask the passenger for the 4-digit PIN to verify the ride.</p>
+                
+                <input 
+                    type="text" 
+                    value={otpInput} 
+                    onChange={(e) => setOtpInput(e.target.value)}
+                    placeholder="Enter 4-digit OTP"
+                    maxLength={4}
+                    className="w-full bg-gray-100 border-2 border-gray-200 rounded-xl px-4 py-4 text-center text-3xl font-bold tracking-[0.5em] focus:outline-none focus:border-black transition mb-6"
+                />
+
+                <div className="flex gap-3">
+                    <button onClick={() => setShowOtpModal(false)} className="flex-1 py-4 font-bold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition">Cancel</button>
+                    <button onClick={verifyOtpAndStartRide} className="flex-1 py-4 font-bold text-white bg-black rounded-xl shadow-lg hover:bg-gray-800 transition">Verify & Start</button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }
