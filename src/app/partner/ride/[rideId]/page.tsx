@@ -234,7 +234,7 @@ export default function PartnerRideTracking() {
       </div>
 
       {/* Bottom Information Card */}
-      <div className="absolute bottom-0 w-full bg-white rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.15)] px-5 pt-3 pb-6 z-[1000] max-h-[55vh] overflow-y-auto scrollbar-hide">
+      <div className="absolute bottom-0 w-full md:w-[28rem] md:left-1/2 md:-translate-x-1/2 bg-white rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.15)] px-5 pt-3 pb-6 z-[1000] max-h-[55vh] overflow-y-auto scrollbar-hide">
          <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4"></div>
          
          {/* Top Header - ETA & Settings */}

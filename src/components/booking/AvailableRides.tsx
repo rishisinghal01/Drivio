@@ -44,14 +44,14 @@ export default function AvailableRides({ vehicleType, partners, pickupName, drop
 
   if (partners.length === 0) {
     return (
-      <div className="absolute bottom-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 z-[1000] min-h-[300px] flex items-center justify-center">
+      <div className="absolute bottom-0 w-full md:w-[28rem] md:left-1/2 md:-translate-x-1/2 bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 z-[1000] min-h-[300px] flex items-center justify-center">
         <p className="text-gray-500 font-medium">No {vehicleType}s available near you right now.</p>
       </div>
     );
   }
 
   return (
-    <div className="absolute bottom-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 z-[1000] max-h-[80vh] overflow-y-auto">
+    <div className="absolute bottom-0 w-full md:w-[28rem] md:left-1/2 md:-translate-x-1/2 bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 z-[1000] max-h-[80vh] overflow-y-auto">
       <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-6"></div>
 
       {/* Location Summary */}
