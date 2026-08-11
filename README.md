@@ -1,13 +1,13 @@
 <div align="center">
   <img src="public/logo.png" alt="Rydex Logo" width="100"/>
   <h1>🚕 Rydex - The Next-Gen Ride Hailing Platform</h1>
-  <p>A full-stack, enterprise-grade Uber clone featuring Real-Time GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
+  <p>A full-stack, enterprise-grade ride-hailing mobility platform featuring Real-Time GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
 </div>
 
 ---
 
 ## 🌟 Why Rydex is Built Differently
-Rydex isn't just a UI clone. It is a highly complex, robust, full-stack application that handles real-world state transitions, background GPS tracking, secure OTP handshakes, and live financial transactions. 
+Rydex isn't just another mobility app. It is a highly complex, robust, full-stack application that handles real-world state transitions, background GPS tracking, secure OTP handshakes, and live financial transactions.  
 
 Whether you are a rider looking for a cab, or a partner joining the fleet, Rydex delivers a seamless, native-like web experience.
 
