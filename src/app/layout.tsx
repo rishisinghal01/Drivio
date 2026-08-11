@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import Provider from "@/lib/Provider"
 import ReduxProvider from "@/redux/ReduxProvider";
+import { SocketProvider } from "@/components/SocketProvider";
 import Inituser from "@/Inituser";
 
 const geistSans = Geist({
@@ -33,13 +34,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Provider>
-          <ReduxProvider>
-             <Inituser/>
-
-            {children}
-         
-
-          </ReduxProvider>
+          <SocketProvider>
+            <ReduxProvider>
+               <Inituser/>
+              {children}
+            </ReduxProvider>
+          </SocketProvider>
         </Provider>
       </body>
     </html>

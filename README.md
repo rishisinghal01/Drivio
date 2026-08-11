@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/logo.png" alt="Drivio Logo" width="100"/>
   <h1>🚕 Drivio - The Next-Gen Ride Hailing Platform</h1>
-  <p>A full-stack, enterprise-grade ride-hailing mobility platform featuring Real-Time GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
+  <p>A full-stack, enterprise-grade ride-hailing mobility platform featuring Real-Time WebSockets (Socket.io), GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
 </div>
 
 ---
@@ -22,14 +22,14 @@ Whether you are a rider looking for a cab, or a partner joining the fleet, Drivi
 - **Live Location Autocomplete:** Powered by OpenStreetMap (OSRM/Nominatim) for hyper-accurate pickup and drop search.
 - **Dynamic Pricing Engine:** Calculates distance-based fares for different vehicle types (Auto, Bike, Cab).
 - **Secure OTP Ride Start:** Generates a unique 4-digit OTP. The driver *must* enter this OTP to start the trip, ensuring the user is in the right vehicle.
-- **Live GPS Tracking:** Watch your assigned driver move towards you on the map in real-time, just like Uber!
+- **Real-Time GPS Tracking (WebSockets):** Watch your assigned driver move towards you on the map with zero latency, powered by a custom `socket.io` server!
 - **Payment Flexibility:** Integrated with **Razorpay** for seamless online payments, along with a traditional Cash option.
 - **Ride History:** Detailed invoice and history of all past rides.
 
 ### 💼 3. Partner App (Driver Experience)
 - **7-Step Rigorous Onboarding:** A highly secure multi-step partner registration flow (Vehicle Details, RC, Driving License, Aadhar).
 - **🔴 Video KYC Verification:** Built-in Video KYC process where drivers must record themselves for identity verification before they are approved!
-- **Real-Time Ride Radar:** Drivers instantly receive nearby ride requests and can accept them with one tap.
+- **Real-Time Ride Radar (WebSockets):** Drivers instantly receive nearby ride requests via socket broadcasts and can accept them with one tap (no polling!).
 - **Earnings Wallet:** Live tracking of daily earnings, completed rides, and automated deduction of the **6% Admin Commission**.
 - **Turn-by-Turn Navigation:** Live map showing the exact route polyline to the user's pickup and drop locations.
 
@@ -47,7 +47,8 @@ Whether you are a rider looking for a cab, or a partner joining the fleet, Drivi
 | Layer | Technologies Used |
 | :--- | :--- |
 | **Frontend** | Next.js 14 (App Router), React, TailwindCSS, Framer Motion, Lucide Icons |
-| **Backend** | Next.js Serverless API Routes, Node.js |
+| **Backend** | Next.js Serverless API Routes, Custom Node.js Server (`server.js`) |
+| **Real-Time Engine**| Socket.io, Socket.io-client (Bidirectional WebSockets) |
 | **Database** | MongoDB, Mongoose ORM |
 | **Maps & Routing** | Leaflet (React-Leaflet), OpenStreetMap, OSRM (Open Source Routing Machine) |
 | **Authentication** | NextAuth.js, Google OAuth, Bcryptjs |

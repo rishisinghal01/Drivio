@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
+import { useSocket } from '@/components/SocketProvider';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -15,10 +16,10 @@ export default function UserRideTracking() {
   const [ride, setRide] = useState<any>(null);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [etaMin, setEtaMin] = useState<number | null>(null);
+  
+  const { socket } = useSocket();
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
     const fetchStatus = async () => {
       try {
         const res = await axios.get(`/api/rides/${rideId}/status`);
@@ -36,10 +37,31 @@ export default function UserRideTracking() {
     };
 
     fetchStatus();
-    interval = setInterval(fetchStatus, 3000); // Poll every 3 seconds for live GPS
-
-    return () => clearInterval(interval);
-  }, [rideId, router]);
+    
+    if (socket) {
+      // Listen for overall ride status updates (accepted, arrived, completed)
+      socket.on('rideUpdated', (data) => {
+         if (data.rideId === rideId) {
+            fetchStatus(); // re-fetch full ride object on status change
+         }
+      });
+      
+      // Listen for ultra-fast live GPS location updates from driver
+      socket.on('driverLocationUpdate', (data) => {
+         if (data.rideId === rideId) {
+            setRide((prev: any) => ({
+               ...prev,
+               driverLocation: { lat: data.lat, lng: data.lng }
+            }));
+         }
+      });
+      
+      return () => {
+         socket.off('rideUpdated');
+         socket.off('driverLocationUpdate');
+      };
+    }
+  }, [rideId, router, socket]);
 
   // Fetch route line only when status changes to avoid spamming OSRM
   useEffect(() => {

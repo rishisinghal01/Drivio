@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { MapPin, Navigation, Clock, Power, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSocket } from '@/components/SocketProvider';
 import Sidebar from '@/components/Sidebar';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
@@ -14,6 +15,7 @@ export default function PartnerDashboard() {
   const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
   
   const router = useRouter();
+  const { socket } = useSocket();
 
   // Get Partner's current GPS location on mount
   useEffect(() => {
@@ -40,19 +42,25 @@ export default function PartnerDashboard() {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
     if (isLive) {
       fetchRequests();
-      interval = setInterval(fetchRequests, 3000); // Poll every 3 seconds while live
+      
+      if (socket) {
+        // When a new ride is requested globally, fetch the updated list
+        socket.on('newRideRequest', fetchRequests);
+        return () => {
+          socket.off('newRideRequest', fetchRequests);
+        };
+      }
     }
-    return () => clearInterval(interval);
-  }, [isLive]);
+  }, [isLive, socket]);
 
   const handleResponse = async (rideId: string, status: 'accepted' | 'rejected') => {
     try {
       const res = await axios.post(`/api/rides/${rideId}/status`, { status });
       if (res.data.success) {
         if (status === 'accepted') {
+          if (socket) socket.emit('rideStatusUpdated', { rideId, status });
           router.push(`/partner/ride/${rideId}`);
         } else {
           setRequests(prev => prev.filter(r => r._id !== rideId));

@@ -5,11 +5,13 @@ import axios from 'axios';
 import { MapPin, Navigation, ShieldCheck, Clock, CreditCard, ArrowRight, Loader2, Banknote, Laptop } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { useSocket } from '@/components/SocketProvider';
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { userData } = useSelector((state: RootState) => state.user);
+  const { socket } = useSocket();
 
   const vehicleType = searchParams.get('vehicle');
   const pickup = searchParams.get('pickup');
@@ -150,6 +152,9 @@ export default function CheckoutPage() {
 
       if (res.data.success) {
         setRideId(res.data.data._id);
+        if (socket) {
+          socket.emit('rideRequested', res.data.data);
+        }
         setFindingDriver(true);
       } else {
         alert("Could not request ride.");

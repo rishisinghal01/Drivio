@@ -5,6 +5,7 @@ import axios from 'axios';
 import { MapPin, Navigation, Phone, CheckCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
+import { useSocket } from '@/components/SocketProvider';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -21,6 +22,8 @@ export default function PartnerRideTracking() {
   const [hasArrived, setHasArrived] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationIndex, setSimulationIndex] = useState(0);
+  
+  const { socket } = useSocket();
 
   // Fetch ride details
   useEffect(() => {
@@ -38,9 +41,16 @@ export default function PartnerRideTracking() {
       }
     };
     fetchRide();
-    const interval = setInterval(fetchRide, 5000);
-    return () => clearInterval(interval);
-  }, [rideId]);
+    
+    if (socket) {
+       socket.on('rideUpdated', (data) => {
+          if (data.rideId === rideId) fetchRide();
+       });
+       return () => {
+          socket.off('rideUpdated');
+       }
+    }
+  }, [rideId, socket]);
 
   // Fetch route line separately when status or location changes
   useEffect(() => {
@@ -82,11 +92,9 @@ export default function PartnerRideTracking() {
           const lng = position.coords.longitude;
           setCurrentLocation({ lat, lng });
 
-          // Send GPS to backend
-          try {
-             await axios.post(`/api/rides/${rideId}/location`, { lat, lng });
-          } catch (e) {
-             console.error("Failed to update location", e);
+          // Send GPS via socket
+          if (socket) {
+             socket.emit('driverLocationUpdate', { rideId, lat, lng });
           }
         },
         (error) => console.error("Geolocation error:", error),
@@ -99,7 +107,7 @@ export default function PartnerRideTracking() {
     return () => {
       if (watchId) navigator.geolocation.clearWatch(watchId);
     };
-  }, [rideId, isSimulating]);
+  }, [rideId, socket, isSimulating]);
 
   // Simulator Effect (Follows the exact road route)
   useEffect(() => {
@@ -123,15 +131,17 @@ export default function PartnerRideTracking() {
             
             setCurrentLocation({ lat: newLat, lng: newLng });
             
-            // Broadcast location to backend
-            axios.post(`/api/rides/${rideId}/location`, { lat: newLat, lng: newLng }).catch(() => {});
+            // Broadcast location to backend and sockets
+            if (socket) {
+               socket.emit('driverLocationUpdate', { rideId, lat: newLat, lng: newLng });
+            }
             
             return nextIndex;
         });
     }, 1500); // update every 1.5s for smoother animation
     
     return () => clearInterval(interval);
-  }, [isSimulating, routeCoords, rideId]);
+  }, [isSimulating, routeCoords, rideId, socket]);
 
   const handleRideAction = async () => {
     if (ride.status === 'accepted') {
@@ -147,12 +157,9 @@ export default function PartnerRideTracking() {
       const newStatus = 'completed';
       const res = await axios.post(`/api/rides/${rideId}/status`, { status: newStatus });
       if (res.data.success) {
-        if (newStatus === 'completed') {
-           alert("Ride completed successfully! Earning added to your wallet.");
-           router.push('/partner/rides');
-        } else {
-           setRide(res.data.data);
-        }
+        alert("Ride Completed Successfully!");
+        if (socket) socket.emit('rideStatusUpdated', { rideId, status: 'completed' });
+        router.push('/partner/rides');
       }
     } catch (error) {
       console.error("Failed to update ride status", error);
@@ -167,10 +174,13 @@ export default function PartnerRideTracking() {
     }
 
     try {
-      const res = await axios.post(`/api/rides/${rideId}/status`, { status: 'ongoing' });
+      const res = await axios.post(`/api/rides/${rideId}/status`, { status: 'ongoing', otp: otpInput });
       if (res.data.success) {
-        setRide(res.data.data);
         setShowOtpModal(false);
+        setRide(res.data.data); // status now ongoing
+        if (socket) socket.emit('rideStatusUpdated', { rideId, status: 'ongoing' });
+      } else {
+        alert("Invalid OTP");
       }
     } catch (error) {
       console.error("Error starting ride", error);
