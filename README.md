@@ -1,34 +1,59 @@
-# Rydex - Smart Vehicle Booking App 🚕
+<div align="center">
+  <img src="public/logo.png" alt="Rydex Logo" width="100"/>
+  <h1>🚕 Rydex - The Next-Gen Ride Hailing Platform</h1>
+  <p>A full-stack, enterprise-grade Uber clone featuring Real-Time GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
+</div>
 
-Rydex is a full-stack, real-time vehicle booking application built with Next.js 14, MongoDB, and TailwindCSS. It provides a seamless ride-hailing experience with live GPS tracking, real-time status updates, and integrated payment gateways.
+---
 
-## 🌟 Key Features
+## 🌟 Why Rydex is Built Differently
+Rydex isn't just a UI clone. It is a highly complex, robust, full-stack application that handles real-world state transitions, background GPS tracking, secure OTP handshakes, and live financial transactions. 
 
-### 👤 User App (Rider)
-- **Live Location Search**: Autocomplete location search powered by OpenStreetMap (OSRM/Nominatim).
-- **Vehicle Selection**: Choose between Auto, Bike, or Cab with dynamic fare calculations based on distance.
-- **Secure Payments**: Razorpay integration for online payments alongside traditional cash options.
-- **Live Tracking**: Real-time map tracking of the driver's vehicle as it moves towards the pickup and drop-off locations.
-- **Secure OTP Verification**: 4-digit OTP generation to ensure you enter the correct vehicle.
-- **Ride History**: View past rides, invoices, and payment statuses.
+Whether you are a rider looking for a cab, or a partner joining the fleet, Rydex delivers a seamless, native-like web experience.
 
-### 🚗 Partner App (Driver)
-- **Comprehensive Onboarding (7-Steps)**: A highly secure partner registration flow including document uploads and background checks.
-- **Video KYC Verification**: Built-in Video KYC process to verify driver identity before they can accept rides, ensuring maximum security.
-- **Driver Dashboard**: View available ride requests nearby and accept them with one tap.
-- **Turn-by-Turn Navigation**: Live map showing the exact route to the user's pickup and drop locations.
-- **Live Simulator**: Built-in developer simulator to test driving movement on the map without needing physical GPS spoofing.
-- **Earnings Wallet**: Track daily earnings, admin commissions, and completed rides.
-- **OTP Verification Flow**: Mandatory OTP entry before starting a ride to ensure security.
+## ✨ Core Features
 
-## 🛠 Tech Stack
+### 🔐 1. Next-Gen Authentication (NextAuth.js)
+- **Google OAuth Integration:** One-click secure login for users.
+- **Credentials Provider:** Custom email & password authentication with `bcryptjs` hashing.
+- **Role-Based Access Control:** Strict JWT-based routing for `user`, `partner`, and `admin` roles.
 
-- **Frontend**: Next.js 14 (App Router), React, TailwindCSS, Lucide Icons
-- **Backend**: Next.js API Routes
-- **Database**: MongoDB (Mongoose ORM)
-- **Maps & Routing**: Leaflet (React-Leaflet), OpenStreetMap, OSRM (Open Source Routing Machine)
-- **Payments**: Razorpay Gateway
-- **Authentication**: NextAuth.js (Session-based)
+### 🚗 2. User App (Rider Experience)
+- **Live Location Autocomplete:** Powered by OpenStreetMap (OSRM/Nominatim) for hyper-accurate pickup and drop search.
+- **Dynamic Pricing Engine:** Calculates distance-based fares for different vehicle types (Auto, Bike, Cab).
+- **Secure OTP Ride Start:** Generates a unique 4-digit OTP. The driver *must* enter this OTP to start the trip, ensuring the user is in the right vehicle.
+- **Live GPS Tracking:** Watch your assigned driver move towards you on the map in real-time, just like Uber!
+- **Payment Flexibility:** Integrated with **Razorpay** for seamless online payments, along with a traditional Cash option.
+- **Ride History:** Detailed invoice and history of all past rides.
+
+### 💼 3. Partner App (Driver Experience)
+- **7-Step Rigorous Onboarding:** A highly secure multi-step partner registration flow (Vehicle Details, RC, Driving License, Aadhar).
+- **🔴 Video KYC Verification:** Built-in Video KYC process where drivers must record themselves for identity verification before they are approved!
+- **Real-Time Ride Radar:** Drivers instantly receive nearby ride requests and can accept them with one tap.
+- **Earnings Wallet:** Live tracking of daily earnings, completed rides, and automated deduction of the **6% Admin Commission**.
+- **Turn-by-Turn Navigation:** Live map showing the exact route polyline to the user's pickup and drop locations.
+
+### 👨‍💻 4. Developer DX & Simulator
+- **Live Driving Simulator:** Developing a GPS app on a stationary desktop is hard. We built a native **"Simulate Driving"** toggle in the Partner app! 
+  - *How it works:* It mocks the GPS coordinates, perfectly iterating through the actual road polyline arrays to animate the car moving smoothly on the map across both User and Partner screens!
+
+### 👑 5. Admin Portal
+- Dedicated `admin@rydex.com` portal to monitor fleet growth, track total platform revenue, and approve pending Partner KYC applications.
+
+---
+
+## 🛠 Tech Stack Deep Dive
+
+| Layer | Technologies Used |
+| :--- | :--- |
+| **Frontend** | Next.js 14 (App Router), React, TailwindCSS, Framer Motion, Lucide Icons |
+| **Backend** | Next.js Serverless API Routes, Node.js |
+| **Database** | MongoDB, Mongoose ORM |
+| **Maps & Routing** | Leaflet (React-Leaflet), OpenStreetMap, OSRM (Open Source Routing Machine) |
+| **Authentication** | NextAuth.js, Google OAuth, Bcryptjs |
+| **Payments** | Razorpay Gateway Integration |
+
+---
 
 ## 🚀 Getting Started
 
@@ -36,39 +61,42 @@ Rydex is a full-stack, real-time vehicle booking application built with Next.js 
 - Node.js (v18 or higher)
 - MongoDB Cluster (MongoDB Atlas or Local)
 - Razorpay API Keys
+- Google OAuth Client ID & Secret
 
 ### Installation
 
-1. Clone the repository and install dependencies:
+1. **Clone the repository:**
 ```bash
+git clone https://github.com/yourusername/rydex.git
+cd rydex
 npm install
 ```
 
-2. Create a `.env.local` file in the root directory and add the following variables:
+2. **Environment Variables:**
+Create a `.env.local` file in the root directory and add the following keys:
 ```env
 MONGODB_URI=your_mongodb_connection_string
 NEXTAUTH_SECRET=your_nextauth_secret
 NEXTAUTH_URL=http://localhost:3000
 
+# Google OAuth
+AUTH_GOOGLE_ID=your_google_client_id
+AUTH_GOOGLE_SECRET=your_google_client_secret
+
 # Razorpay Keys
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+
+# Admin Secret
+ADMIN_PASSWORD=your_secure_admin_password
 ```
 
-3. Start the development server:
+3. **Start the development server:**
 ```bash
 npm run dev
 ```
 
-4. Open `http://localhost:3000` in your browser.
-
-## 🗺 Map Configuration (Leaflet)
-This project uses **CartoDB Voyager** map tiles for a clean, premium look. The maps are dynamically loaded on the client side using Next.js `dynamic` imports to prevent SSR window errors.
-
-## 🧪 Developer Testing (Simulator)
-When testing the Partner app on a Desktop computer, the physical GPS location does not change. We've included a **Simulate Driving** button on the Partner Tracking screen. 
-- Click **"Mock GPS for Testing"** if your location is blocked to teleport to the pickup point.
-- Click **"Simulate Driving"** to automatically animate the vehicle along the black route polyline towards the destination!
+4. Open `http://localhost:3000` and start booking rides! 🚕
 
 ---
-Built with ❤️ using Next.js and Tailwind CSS.
+*Built with ❤️ and an obsession for detail.*
