@@ -11,6 +11,7 @@ export interface IUser extends Document{
     otpExpires:Date,
     partnerOnboardingStep:number,
     mobileNumber:string,
+    videoKycStatus: "pending" | "completed" | "failed",
      createdAt:Date,
     updatedAt:Date,
 
@@ -53,9 +54,12 @@ const userSchema = new mongoose.Schema<IUser>({
   mobileNumber:{
     type:String,
     
+  },
+  videoKycStatus: {
+    type: String,
+    enum: ["pending", "completed", "failed"],
+    default: "pending"
   }
-
-
 
 
 },{timestamps:true})

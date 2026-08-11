@@ -9,7 +9,7 @@ import AuthModel from './AuthModel';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { button, div } from 'motion/react-client';
-import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X } from 'lucide-react';
+import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X, Video } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { setUserData } from '@/redux/userSlice';
 const nav_items = ["Home", "Bookings", "About Us", "Contact"]
@@ -94,6 +94,7 @@ function Nav() {
                             </div>
 
                           )}
+
                           <button className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2' onClick={handlelogout}>
                             <LogOut size={16} />
                             LogOut
@@ -225,6 +226,7 @@ function Nav() {
                   </div>
 
                 )}
+
                 <button className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2' onClick={handlelogout}>
                   <LogOut size={16} />
                   LogOut

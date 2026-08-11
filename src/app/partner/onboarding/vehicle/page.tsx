@@ -25,6 +25,7 @@ const handlevehicle = async ()=>{
     setloading(true);
     const {data} = await axios.post("/api/partner/onboarding/vehicle",{type:vehicleType, number:vehicleNumber, vehicleModel:vehicleModel})
     setloading(false);
+    router.push("/partner/onboarding/documents");
   } catch (error:any) {
     setloading(false)
     seterr(error?.response?.data?.message ?? "Something went wrong");

@@ -33,6 +33,7 @@ function Page() {
         })
         console.log(data);
         setloading(false);
+        router.push("/partner/onboarding/status");
     } catch (error:any) {
         seterr(error?.response?.data?.message ?? "Something went wrong");
         console.log(err);

@@ -31,7 +31,8 @@ return null;
         formdata.append("license",docs.license)
         formdata.append("rc",docs.rc)
         const {data} = await axios.post("/api/partner/onboarding/documents",formdata);
-setloading(false);
+        setloading(false);
+        router.push("/partner/onboarding/bank");
     }
    catch (error: any) {
     console.log(error);
