@@ -24,14 +24,20 @@ export default function PartnerReviewPage({ params }: { params: Promise<{ partne
   }, []);
 
   useEffect(() => {
+    if (showKyc) return; // Pause polling during video call
+    const interval = setInterval(() => fetchPartnerDetails(true), 3000);
+    return () => clearInterval(interval);
+  }, [showKyc]);
+
+  useEffect(() => {
     if (showKyc && containerRef.current) {
       startKycCall();
     }
   }, [showKyc]);
 
-  const fetchPartnerDetails = async () => {
+  const fetchPartnerDetails = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await axios.get(`/api/admin/partners/${partnerId}`);
       if (res.data.success) {
         setData(res.data.data);
@@ -39,7 +45,7 @@ export default function PartnerReviewPage({ params }: { params: Promise<{ partne
     } catch (error) {
       console.error("Failed to fetch details", error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -64,8 +70,8 @@ export default function PartnerReviewPage({ params }: { params: Promise<{ partne
       const appid = Number(process.env.NEXT_PUBLIC_ZEGO_APP_ID);
       const server_secret = process.env.NEXT_PUBLIC_ZEGO_SERVER_SECRET;
       
-      const adminUserId = userData?._id?.toString() || "admin_" + Date.now().toString();
-      const adminUserName = userData?.name || "Admin";
+      const adminUserId = "admin_" + (userData?._id?.toString() || Date.now().toString());
+      const adminUserName = (userData?.name || "Admin") + " (Admin)";
 
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appid,

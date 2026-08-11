@@ -19,11 +19,13 @@ export default function AdminPartnersDashboard() {
 
   useEffect(() => {
     fetchPartners();
+    const interval = setInterval(() => fetchPartners(true), 3000);
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchPartners = async () => {
+  const fetchPartners = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await axios.get("/api/admin/partners");
       if (res.data.success) {
         setPartners(res.data.data);
@@ -31,7 +33,7 @@ export default function AdminPartnersDashboard() {
     } catch (error) {
       console.error("Failed to fetch partners", error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 

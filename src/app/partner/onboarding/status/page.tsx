@@ -31,7 +31,7 @@ export default function PartnerStatusHub() {
 
     useEffect(() => {
         fetchStatus();
-        const interval = setInterval(fetchStatus, 10000); // poll every 10 seconds
+        const interval = setInterval(fetchStatus, 3000); // poll every 3 seconds
         return () => clearInterval(interval);
     }, []);
 
