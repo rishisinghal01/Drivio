@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
 
         }
         else {
-            return null;
+            return Response.json(null, { status: 200 });
         }
 
     } catch (error) {

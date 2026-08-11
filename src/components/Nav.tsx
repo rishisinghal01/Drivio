@@ -9,7 +9,7 @@ import AuthModel from './AuthModel';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { button, div } from 'motion/react-client';
-import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X, Video } from 'lucide-react';
+import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X, Video, MapPin } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { setUserData } from '@/redux/userSlice';
 const nav_items = ["Home", "Bookings", "About Us", "Contact"]
@@ -80,6 +80,24 @@ function Nav() {
                           <p className='text-xs uppercase text-gray-500 mb-4'>
                             {userData.role === "partner" && userData.partnerOnboardingStep < 7 ? "ONBOARDING" : userData.role}
                           </p>
+                          {userData.role === "user" && (
+                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/user/book"); setprofileopen(false);}} >
+                              <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                                <Car size={16} />
+                              </div>
+                              Book a Ride
+                              <ChevronRight size={16} className='ml-auto' />
+                            </div>
+                          )}
+                          {userData.role === "partner" && userData.partnerOnboardingStep >= 7 && (
+                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/partner/rides"); setprofileopen(false);}} >
+                              <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                                <MapPin size={16} />
+                              </div>
+                              Partner Dashboard
+                              <ChevronRight size={16} className='ml-auto' />
+                            </div>
+                          )}
                           {userData.role !== "partner" && (
                             <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>router.push("/partner/onboarding/vehicle")} >
                               <div className='flex -space-x-2'>
@@ -225,6 +243,24 @@ function Nav() {
                 <p className='text-xs uppercase text-gray-500 mb-4'>
                   {userData.role === "partner" && userData.partnerOnboardingStep < 7 ? "ONBOARDING" : userData.role}
                 </p>
+                {userData.role === "user" && (
+                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/user/book"); setprofileopen(false);}} >
+                    <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                      <Car size={16} />
+                    </div>
+                    Book a Ride
+                    <ChevronRight size={16} className='ml-auto' />
+                  </div>
+                )}
+                {userData.role === "partner" && userData.partnerOnboardingStep >= 7 && (
+                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/partner/rides"); setprofileopen(false);}} >
+                    <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                      <MapPin size={16} />
+                    </div>
+                    Partner Dashboard
+                    <ChevronRight size={16} className='ml-auto' />
+                  </div>
+                )}
                 {userData.role !== "partner" && (
                   <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/partner/onboarding/vehicle")
                     console.log("clicked")

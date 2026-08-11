@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
          
             return Response.json({ vehicle }, { status: 200 })
         }
-        else return null;
+        else return Response.json(null, { status: 200 });
 
 
 

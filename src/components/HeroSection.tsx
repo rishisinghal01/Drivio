@@ -52,11 +52,18 @@ function HeroSection({onauthrequired}:{onauthrequired:()=>void}) {
         <motion.button
            whileHover={{scale:1.05}}
            whileTap={{scale:0.95}}
-           
             className="mt-12 px-10 p-4 bg-white text-black rounded-full font-semibold shadow-xl"
-            onClick={()=>{!userData?onauthrequired():router.push("/user/book")}}
+            onClick={()=>{
+              if(!userData){
+                 onauthrequired()
+              } else if (userData.role === 'partner' && userData.partnerOnboardingStep >= 7) {
+                 router.push("/partner/rides")
+              } else {
+                 router.push("/user/book")
+              }
+            }}
         >
-          Book Now
+          {userData?.role === 'partner' && userData.partnerOnboardingStep >= 7 ? 'Go to Dashboard' : 'Book Now'}
         </motion.button>
 
        

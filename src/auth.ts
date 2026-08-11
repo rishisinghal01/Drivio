@@ -48,7 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     throw Error("Invalid Credentials");
                 }
                 return {
-                    id: user._id,
+                    id: user._id.toString(),
                     name: user.name,
                     email: user.email,
                     role: user.role,
@@ -75,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     })
                 }
 
-                user.id = dbuser._id;
+                user.id = dbuser._id.toString();
                 user.role = dbuser.role;
             }
             return true;

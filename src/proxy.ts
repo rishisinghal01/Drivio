@@ -21,10 +21,17 @@ export async function proxy(req:NextRequest) {
     }
 
     const session = await auth();
+    if(pathname.startsWith("/api")){
+        if(!session || !session.user){
+            return NextResponse.json({
+                message: "Unauthorized"
+            }, {status: 401})
+        }
+    }
+
     if(!session){
         return NextResponse.redirect(new URL("/",req.url))
     }
-
 
     const role = session.user?.role;
     if(pathname.startsWith("/admin")){
@@ -81,13 +88,7 @@ export async function proxy(req:NextRequest) {
        }
     }
 
-    if(pathname.startsWith("/api")){
-        if(!session ||!session.user){
-            return  NextResponse.json({
-                message:"Unauthorized"
-            },{status:401})
-        }
-    }
+    // Removed duplicate API check
 
 
 
