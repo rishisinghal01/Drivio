@@ -46,14 +46,11 @@ function Nav() {
           <Image src={'/logo.png'} alt="logo" width={44} height={44} style={{ width: "auto", height: "auto" }} priority />
           <div className='hidden md:flex items-center gap-10'>
             {nav_items.map((item, idx) => {
-              let hfre;
-              if (item == "Home") {
-                hfre = '/'
-              }
-              else {
-                hfre = `/${item.toLowerCase()}`;
+              let hfre = '/';
+              if (item === "Bookings") hfre = '/user/rides';
+              else if (item === "About Us") hfre = '/about';
+              else if (item === "Contact") hfre = '/contact';
 
-              }
               const active = hfre == pathname
               return <Link key={idx} href={hfre} className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}>{item}</Link>
             })}
@@ -194,14 +191,11 @@ function Nav() {
             >
               <div className=' flex flex-col divide-y divide-white/10'>
                 {nav_items.map((item, idx) => {
-                  let hfre;
-                  if (item == "Home") {
-                    hfre = '/'
-                  }
-                  else {
-                    hfre = `/${item.toLowerCase()}`;
+                  let hfre = '/';
+                  if (item === "Bookings") hfre = '/user/rides';
+                  else if (item === "About Us") hfre = '/about';
+                  else if (item === "Contact") hfre = '/contact';
 
-                  }
                   const active = hfre == pathname
                   return <Link key={idx} href={hfre} className='px-6 py-4 text-gray-300 hover:bg-white/5' >{item}</Link>
                 })}
