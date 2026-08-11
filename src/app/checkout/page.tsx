@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
-import { MapPin, Navigation, ShieldCheck, Clock, CreditCard, ArrowRight, Loader2 } from 'lucide-react';
+import { MapPin, Navigation, ShieldCheck, Clock, CreditCard, ArrowRight, Loader2, Banknote, Laptop } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
@@ -24,6 +24,18 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [findingDriver, setFindingDriver] = useState(false);
   const [rideId, setRideId] = useState<string | null>(null);
+  const [paymentMode, setPaymentMode] = useState<"Cash" | "Online">("Cash");
+
+  // Load Razorpay Script
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Poll for ride status if we are finding a driver
   useEffect(() => {
@@ -54,12 +66,86 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
+      // If online, initialize Razorpay first
+      let paymentStatus = "Pending";
+      let razorpayOrderId = null;
+      let razorpayPaymentId = null;
+
+      if (paymentMode === "Online") {
+         const orderRes = await axios.post("/api/payment/create-order", { amount: parseFloat(fare!) });
+         if (!orderRes.data.success) {
+            alert("Failed to initialize payment");
+            setLoading(false);
+            return;
+         }
+
+         const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+            amount: orderRes.data.order.amount,
+            currency: "INR",
+            name: "Rydex",
+            description: "Ride Payment",
+            order_id: orderRes.data.order.id,
+            handler: async function (response: any) {
+               try {
+                  const verifyRes = await axios.post("/api/payment/verify", {
+                     razorpay_order_id: response.razorpay_order_id,
+                     razorpay_payment_id: response.razorpay_payment_id,
+                     razorpay_signature: response.razorpay_signature
+                  });
+
+                  if (verifyRes.data.success) {
+                     await submitRideRequest(response.razorpay_order_id, response.razorpay_payment_id, "Completed");
+                  } else {
+                     alert("Payment verification failed");
+                     setLoading(false);
+                  }
+               } catch (error) {
+                  console.error(error);
+                  alert("Payment verification error");
+                  setLoading(false);
+               }
+            },
+            prefill: {
+               name: userData?.name || "Customer",
+               email: userData?.email || "customer@example.com",
+               contact: userData?.mobileNumber || "9999999999"
+            },
+            theme: {
+               color: "#000000"
+            }
+         };
+
+         const rzp = new (window as any).Razorpay(options);
+         rzp.on('payment.failed', function (response: any){
+             alert("Payment Failed");
+             setLoading(false);
+         });
+         rzp.open();
+         return; // wait for handler
+      }
+
+      await submitRideRequest(null, null, "Pending");
+
+    } catch (error) {
+      console.error("Error requesting ride", error);
+      alert("Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  const submitRideRequest = async (rzpOrderId: string | null, rzpPaymentId: string | null, payStatus: string) => {
+    try {
       const res = await axios.post('/api/rides/request', {
         vehicleType,
         partnerId, // Specific partner they clicked 'Book' on
         pickup: { address: pickup, lat: parseFloat(pickupLat!), lng: parseFloat(pickupLng!) },
         drop: { address: drop, lat: parseFloat(dropLat!), lng: parseFloat(dropLng!) },
-        fare: parseFloat(fare!)
+        fare: parseFloat(fare!),
+        paymentMode,
+        paymentStatus: payStatus,
+        razorpayOrderId: rzpOrderId,
+        razorpayPaymentId: rzpPaymentId
       });
 
       if (res.data.success) {
@@ -69,7 +155,7 @@ export default function CheckoutPage() {
         alert("Could not request ride.");
       }
     } catch (error) {
-      console.error("Error requesting ride", error);
+      console.error("Error submitting ride request", error);
       alert("Something went wrong");
     } finally {
       setLoading(false);
@@ -174,9 +260,28 @@ export default function CheckoutPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <CreditCard size={18} className="text-gray-400 mt-0.5" />
-                      <span className="text-sm text-gray-600">Pay after driver accepts</span>
+                      <span className="text-sm text-gray-600">Select payment method below</span>
                     </li>
                   </ul>
+
+                  {/* Payment Selection */}
+                  <div className="mt-6 space-y-3">
+                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment Method</p>
+                     <div className="flex gap-3">
+                        <button 
+                           onClick={() => setPaymentMode("Cash")}
+                           className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 font-bold transition ${paymentMode === "Cash" ? "border-black bg-black text-white" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                        >
+                           <Banknote size={18} /> Cash
+                        </button>
+                        <button 
+                           onClick={() => setPaymentMode("Online")}
+                           className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 font-bold transition ${paymentMode === "Online" ? "border-black bg-black text-white" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                        >
+                           <Laptop size={18} /> Online
+                        </button>
+                     </div>
+                  </div>
                 </div>
 
                 <div className="mt-8">

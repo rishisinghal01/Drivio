@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { vehicleType, partnerId, pickup, drop, fare } = body;
+    const { vehicleType, partnerId, pickup, drop, fare, paymentMode, paymentStatus, razorpayOrderId, razorpayPaymentId } = body;
 
     if (!vehicleType || !pickup || !drop || !fare) {
       return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
@@ -26,7 +26,11 @@ export async function POST(req: NextRequest) {
         pickup,
         drop,
         fare,
-        status: "pending"
+        status: "pending",
+        paymentMode: paymentMode || "Cash",
+        paymentStatus: paymentStatus || "Pending",
+        razorpayOrderId: razorpayOrderId || null,
+        razorpayPaymentId: razorpayPaymentId || null
     });
 
     return NextResponse.json({ success: true, data: newRide }, { status: 201 });

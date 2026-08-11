@@ -55,6 +55,12 @@ export async function POST(req: NextRequest, props: { params: Promise<{ rideId: 
         if (status === 'accepted') {
             ride.partner = session.user.id;
         }
+
+        if (status === 'completed') {
+            ride.adminCommission = Number((ride.fare * 0.06).toFixed(2));
+            ride.partnerEarnings = Number((ride.fare * 0.94).toFixed(2));
+        }
+        
         await ride.save();
     
         return NextResponse.json({ success: true, data: ride }, { status: 200 });

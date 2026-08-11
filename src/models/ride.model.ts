@@ -15,11 +15,17 @@ export interface IRide extends Document {
         lng: number;
     };
     fare: number;
-    status: "pending" | "accepted" | "rejected" | "completed" | "cancelled";
+    status: "pending" | "accepted" | "ongoing" | "rejected" | "completed" | "cancelled";
     driverLocation?: {
         lat: number;
         lng: number;
     };
+    paymentMode?: "Cash" | "Online";
+    paymentStatus?: "Pending" | "Completed" | "Failed";
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    adminCommission?: number;
+    partnerEarnings?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -41,13 +47,19 @@ const rideSchema = new Schema<IRide>({
     fare: { type: Number, required: true },
     status: {
         type: String,
-        enum: ["pending", "accepted", "rejected", "completed", "cancelled"],
+        enum: ["pending", "accepted", "ongoing", "rejected", "completed", "cancelled"],
         default: "pending"
     },
     driverLocation: {
         lat: { type: Number },
         lng: { type: Number }
-    }
+    },
+    paymentMode: { type: String, enum: ["Cash", "Online"], default: "Cash" },
+    paymentStatus: { type: String, enum: ["Pending", "Completed", "Failed"], default: "Pending" },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    adminCommission: { type: Number, default: 0 },
+    partnerEarnings: { type: Number, default: 0 }
 }, { timestamps: true });
 
 const Ride = mongoose.models.Ride || mongoose.model<IRide>("Ride", rideSchema);
