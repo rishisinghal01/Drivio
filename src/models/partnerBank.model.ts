@@ -1,16 +1,11 @@
 
-
-
-
 import mongoose from "mongoose";
- 
-
-interface IPartnerBank  {
+interface IPartnerBank {
     owner: mongoose.Types.ObjectId
-    accountHolder:string,
-    accountNumber:string,
-    ifsc:string,
-    upi?:string,
+    accountHolder: string,
+    accountNumber: string,
+    ifsc: string,
+    upi?: string,
     status: "not_added" | "added" | "verified",
     rejectionReason?: string,
     createdAt: Date,
@@ -24,30 +19,30 @@ const PartnerBankSchema = new mongoose.Schema<IPartnerBank>({
         required: true
     },
 
-    status:{
-        type:String,
-        enum:["not_added","added","verified"],
-        default:"not_added"
+    status: {
+        type: String,
+        enum: ["not_added", "added", "verified"],
+        default: "not_added"
     },
-      accountHolder:{
-        type:String,
-        required:true
-    },
-
-    accountNumber:{
-        type:String,
-        required:true,
-        unique:true 
-    },
-    ifsc:{
-        type:String,
-        required:true,
-        uppercase:true,
+    accountHolder: {
+        type: String,
+        required: true
     },
 
-    upi:String,
+    accountNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    ifsc: {
+        type: String,
+        required: true,
+        uppercase: true,
+    },
 
-  
+    upi: String,
+
+
 
 
 }, { timestamps: true })
@@ -55,6 +50,6 @@ const PartnerBankSchema = new mongoose.Schema<IPartnerBank>({
 
 
 
-const PartnerBank= mongoose.models.PartnerBankSchema|| mongoose.model("PartnerDocs",PartnerBankSchema)
+const PartnerBank = mongoose.models.PartnerBankSchema || mongoose.model("PartnerDocs", PartnerBankSchema)
 
-export default PartnerBank ;
+export default PartnerBank;

@@ -51,8 +51,8 @@ export default function PartnerKycCall() {
         showAudioVideoSettingsButton: true,
         showScreenSharingButton: false,
         onLeaveRoom: () => {
-           // Redirect back to dashboard after call
-           router.push("/partner");
+           // Redirect back to status hub after call
+           router.push("/partner/onboarding/status");
         }
       });
     } catch (error) {

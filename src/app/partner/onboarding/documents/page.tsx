@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CircleDashed, FileCheck, Upload, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,25 @@ function Page() {
         license: null,
         rc: null
     })
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        const checkStatus = async () => {
+            try {
+                const { data } = await axios.get("/api/partner/status");
+                if (data.step < 1) {
+                    router.push("/partner/onboarding/vehicle");
+                } else {
+                    setPageLoading(false);
+                }
+            } catch (error) {
+                router.push("/partner/onboarding/vehicle");
+            }
+        };
+        checkStatus();
+    }, [router]);
+
+    if (pageLoading) return <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>;
 
    const handleDocs = async ()=>{
     setloading(true);
@@ -89,11 +108,13 @@ return null;
                             <p className="text-sm font-semibold" >Aadhar / ID Proof</p>
                             <p className="text-xs text-gray-500">Government issued ID</p>
                         </div>
-                        <div>
-                            <span className="text-xs text-gray-400">
-                                Upload
-                            </span>
-                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center"><UploadCloud size={80} /></div>
+                        <div className="flex items-center gap-3">
+                            {docs.aadhar ? (
+                                <span className="text-xs text-green-500 font-semibold">Selected</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Upload</span>
+                            )}
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center"><UploadCloud size={20} /></div>
                         </div>
 
                         <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleimage("aadhar", e.target?.files?.[0] || null)} />
@@ -113,11 +134,13 @@ return null;
                             <p className="text-sm font-semibold" >Driving License</p>
                             <p className="text-xs text-gray-500">Valid Driving License</p>
                         </div>
-                        <div>
-                            <span className="text-xs text-gray-400">
-                                Upload
-                            </span>
-                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center"><UploadCloud size={80} /></div>
+                        <div className="flex items-center gap-3">
+                            {docs.license ? (
+                                <span className="text-xs text-green-500 font-semibold">Selected</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Upload</span>
+                            )}
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center"><UploadCloud size={20} /></div>
                         </div>
 
                         <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleimage("license", e.target?.files?.[0] || null)} />
@@ -136,11 +159,13 @@ return null;
                             <p className="text-sm font-semibold" >Vehicle RC</p>
                             <p className="text-xs text-gray-500">Registration Certificate</p>
                         </div>
-                        <div>
-                            <span className="text-xs text-gray-400">
-                                Upload
-                            </span>
-                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center"><UploadCloud size={80} /></div>
+                        <div className="flex items-center gap-3">
+                            {docs.rc ? (
+                                <span className="text-xs text-green-500 font-semibold">Selected</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Upload</span>
+                            )}
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center"><UploadCloud size={20} /></div>
                         </div>
 
 

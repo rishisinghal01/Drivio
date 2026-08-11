@@ -3,11 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Clock, Video, FileText, ChevronRight } from "lucide-react";
+import { Check, Clock, Lock, Video, CheckCircle2, ChevronRight, FileText } from "lucide-react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { setUserData } from "@/redux/userSlice"; // Assuming this exists to update global state if needed
 
 export default function PartnerStatusHub() {
     const router = useRouter();
@@ -37,44 +34,68 @@ export default function PartnerStatusHub() {
     if (loading && step === null) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <p className="text-gray-500">Checking your status...</p>
+                <p className="text-gray-500 font-medium">Checking your status...</p>
             </div>
         );
     }
 
-    const renderContent = () => {
+    const steps = [
+        { id: 1, name: "Vehicle", status: (step ?? 0) >= 1 ? "completed" : "current" },
+        { id: 2, name: "Documents", status: (step ?? 0) >= 2 ? "completed" : (step ?? 0) === 1 ? "current" : "locked" },
+        { id: 3, name: "Bank", status: (step ?? 0) >= 3 ? "completed" : (step ?? 0) === 2 ? "current" : "locked" },
+        { id: 4, name: "Review", status: (step ?? 0) >= 4 ? "completed" : (step ?? 0) === 3 ? "current" : "locked" },
+        { id: 5, name: "Video KYC", status: (step ?? 0) >= 6 ? "completed" : ((step ?? 0) >= 4 && (step ?? 0) <= 5) ? "current" : "locked" },
+        { id: 6, name: "Pricing", status: (step ?? 0) >= 7 ? "completed" : (step ?? 0) === 6 ? "current" : "locked" },
+        { id: 7, name: "Final Review", status: (step ?? 0) >= 8 ? "completed" : (step ?? 0) === 7 ? "current" : "locked" },
+        { id: 8, name: "Live", status: (step ?? 0) >= 8 ? "completed" : "locked" },
+    ];
+
+    const getActionCard = () => {
         if (step === null) return null;
+
+        if (step < 3) {
+            return (
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center shrink-0">
+                        <FileText size={24} />
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">Incomplete Onboarding</h3>
+                        <p className="text-sm text-gray-500 mt-1">Please complete the initial steps to proceed.</p>
+                    </div>
+                    <button onClick={() => router.push("/partner/onboarding/vehicle")} className="px-6 py-3 bg-black text-white font-medium rounded-xl">
+                        Resume
+                    </button>
+                </div>
+            );
+        }
 
         if (step === 3) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto">
-                        <Clock size={32} />
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center shrink-0">
+                        <Clock size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Awaiting Document Verification</h2>
-                    <p className="text-gray-500 text-sm">
-                        Our team is reviewing your vehicle details, documents, and bank info. This usually takes 24-48 hours. Please check back later.
-                    </p>
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900">Documents Under Review</h3>
+                        <p className="text-sm text-gray-500 mt-1">Admin is verifying your documents. This usually takes 24-48 hours.</p>
+                    </div>
                 </div>
             );
         }
 
         if (step === 4) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                        <FileText size={32} />
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
+                        <Video size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Documents Approved!</h2>
-                    <p className="text-gray-500 text-sm">
-                        Your documents are verified. The next step is a quick Video KYC call with our admin.
-                    </p>
-                    <button 
-                        onClick={() => router.push("/partner/kyc")}
-                        className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium flex items-center justify-center gap-2 w-full hover:bg-blue-700 transition"
-                    >
-                        <Video size={18} />
-                        Join Video KYC
+                    <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">Action Required: Video KYC</h3>
+                        <p className="text-sm text-gray-500 mt-1">Your documents are approved. Please join the Video KYC call.</p>
+                    </div>
+                    <button onClick={() => router.push("/partner/kyc")} className="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition">
+                        Join Call
                     </button>
                 </div>
             );
@@ -82,34 +103,30 @@ export default function PartnerStatusHub() {
 
         if (step === 5) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto">
-                        <Clock size={32} />
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center shrink-0">
+                        <Clock size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Video KYC Submitted</h2>
-                    <p className="text-gray-500 text-sm">
-                        Waiting for final approval of your Video KYC from the admin.
-                    </p>
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900">Video KYC Review Pending</h3>
+                        <p className="text-sm text-gray-500 mt-1">Admin is verifying your video KYC session.</p>
+                    </div>
                 </div>
             );
         }
 
         if (step === 6) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                        <CheckCircle size={32} />
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+                        <FileText size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Video KYC Approved!</h2>
-                    <p className="text-gray-500 text-sm">
-                        Almost there. Now set up your pricing and upload a photo of your vehicle.
-                    </p>
-                    <button 
-                        onClick={() => router.push("/partner/onboarding/pricing")}
-                        className="mt-6 bg-black text-white px-6 py-3 rounded-xl font-medium flex items-center justify-center gap-2 w-full hover:bg-gray-800 transition"
-                    >
-                        Setup Pricing & Photo
-                        <ChevronRight size={18} />
+                    <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">Action Required: Pricing & Photo</h3>
+                        <p className="text-sm text-gray-500 mt-1">Set your per KM price and upload your vehicle photo.</p>
+                    </div>
+                    <button onClick={() => router.push("/partner/onboarding/pricing")} className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition">
+                        Setup Pricing
                     </button>
                 </div>
             );
@@ -117,61 +134,93 @@ export default function PartnerStatusHub() {
 
         if (step === 7) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto">
-                        <Clock size={32} />
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+                    <div className="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center shrink-0">
+                        <Clock size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Final Verification Pending</h2>
-                    <p className="text-gray-500 text-sm">
-                        We are verifying your pricing and vehicle photo. You will be notified once you are fully active!
-                    </p>
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900">Final Review Pending</h3>
+                        <p className="text-sm text-gray-500 mt-1">Admin is verifying your pricing and vehicle photo. Please wait.</p>
+                    </div>
                 </div>
             );
         }
 
         if (step >= 8) {
             return (
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                        <CheckCircle size={32} />
+                <div className="bg-white border border-green-500 rounded-2xl p-6 flex items-center gap-6 shadow-sm bg-green-50">
+                    <div className="w-14 h-14 bg-green-500 text-white rounded-2xl flex items-center justify-center shrink-0">
+                        <CheckCircle2 size={24} />
                     </div>
-                    <h2 className="text-xl font-bold">Welcome Aboard!</h2>
-                    <p className="text-gray-500 text-sm">
-                        Your partner onboarding is 100% complete. You are now ready to accept rides.
-                    </p>
-                    <button 
-                        onClick={() => router.push("/")}
-                        className="mt-6 bg-black text-white px-6 py-3 rounded-xl font-medium flex items-center justify-center w-full hover:bg-gray-800 transition"
-                    >
+                    <div className="flex-1">
+                        <h3 className="text-lg font-bold text-green-900">Account Activated</h3>
+                        <p className="text-sm text-green-700 mt-1">Congratulations! Your vendor account is now live.</p>
+                    </div>
+                    <button onClick={() => router.push("/partner")} className="px-6 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition">
                         Go to Dashboard
                     </button>
                 </div>
             );
         }
-
-        return (
-            <div className="text-center space-y-4">
-                <p>Incomplete application (Step: {step}).</p>
-                <button onClick={() => router.push("/partner/onboarding/vehicle")} className="text-blue-500 underline">
-                    Resume Onboarding
-                </button>
-            </div>
-        );
-    }
+    };
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center px-4">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-8"
-            >
-                {renderContent()}
-                
-                <button onClick={fetchStatus} className="mt-8 text-xs text-gray-400 hover:text-gray-600 underline text-center w-full">
-                    Refresh Status
+        <div className="min-h-screen bg-[#f8f9fa] pt-28 px-4 md:px-12">
+            <div className="max-w-6xl mx-auto">
+                <div className="mb-10">
+                    <h1 className="text-3xl font-bold text-gray-900">Vendor Onboarding</h1>
+                    <p className="text-gray-500 mt-2">Complete all steps to activate your account</p>
+                </div>
+
+                {/* Stepper Card */}
+                <div className="bg-white rounded-[24px] shadow-sm border border-gray-200 p-8 md:p-12 mb-8 overflow-x-auto">
+                    <div className="flex items-center min-w-max justify-between relative">
+                        {/* Connecting Line */}
+                        <div className="absolute left-[3%] right-[3%] top-6 h-[2px] bg-gray-200 -z-10" />
+
+                        {steps.map((s, index) => {
+                            const isCompleted = s.status === "completed";
+                            const isCurrent = s.status === "current";
+                            const isLocked = s.status === "locked";
+
+                            return (
+                                <div key={s.id} className="flex flex-col items-center relative w-24">
+                                    {/* Line override for completed steps */}
+                                    {index > 0 && (isCompleted || isCurrent) && (
+                                        <div className="absolute right-1/2 top-6 h-[2px] bg-black -z-10 w-full" />
+                                    )}
+
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors duration-300 bg-white
+                                        ${isCompleted ? "border-black bg-black text-white" : ""}
+                                        ${isCurrent ? "border-black text-black" : ""}
+                                        ${isLocked ? "border-gray-200 text-gray-400" : ""}
+                                    `}>
+                                        {isCompleted ? (
+                                            <Check size={20} strokeWidth={3} />
+                                        ) : isCurrent ? (
+                                            <span className="font-semibold text-lg">{s.id}</span>
+                                        ) : (
+                                            <Lock size={18} />
+                                        )}
+                                    </div>
+                                    <p className={`mt-4 text-xs font-semibold whitespace-nowrap
+                                        ${(isCompleted || isCurrent) ? "text-gray-900" : "text-gray-400"}
+                                    `}>
+                                        {s.name}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Action Card */}
+                {getActionCard()}
+
+                <button onClick={fetchStatus} className="mt-8 text-xs text-gray-400 hover:text-gray-600 underline block text-center mx-auto">
+                    Refresh Status manually
                 </button>
-            </motion.div>
+            </div>
         </div>
     );
 }
