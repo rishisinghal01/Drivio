@@ -13,6 +13,8 @@ Rydex is a full-stack, real-time vehicle booking application built with Next.js 
 - **Ride History**: View past rides, invoices, and payment statuses.
 
 ### 🚗 Partner App (Driver)
+- **Comprehensive Onboarding (7-Steps)**: A highly secure partner registration flow including document uploads and background checks.
+- **Video KYC Verification**: Built-in Video KYC process to verify driver identity before they can accept rides, ensuring maximum security.
 - **Driver Dashboard**: View available ride requests nearby and accept them with one tap.
 - **Turn-by-Turn Navigation**: Live map showing the exact route to the user's pickup and drop locations.
 - **Live Simulator**: Built-in developer simulator to test driving movement on the map without needing physical GPS spoofing.
