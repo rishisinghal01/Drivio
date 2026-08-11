@@ -27,6 +27,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
                 const email = credentials.email;
                 const password = credentials.password as string;
+
+                if (email === "admin@rydex.com" && password === process.env.ADMIN_PASSWORD) {
+                    return {
+                        id: "admin-system",
+                        name: "System Admin",
+                        email: "admin@rydex.com",
+                        role: "admin",
+                    }
+                }
+
                 await connectDb();
                 const user = await User.findOne({ email })
                 if (!user) {

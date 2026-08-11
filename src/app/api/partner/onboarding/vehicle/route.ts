@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         if (user.partnerOnboardingStep < 1) {
             user.partnerOnboardingStep = 1;
         }
-        user.role = "partner"
+        user.role = "partner";
         await user.save();
 
 

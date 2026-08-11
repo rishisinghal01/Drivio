@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import connectDb from "@/lib/db";
 import User from "@/models/user.model";
 
-export async function POST(req: Request, { params }: { params: { partnerId: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ partnerId: string }> }) {
   try {
     await connectDb();
-    const { partnerId } = params;
+    const { partnerId } = await params;
     const { step } = await req.json();
 
     if (!partnerId || !step) {

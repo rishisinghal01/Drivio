@@ -8,8 +8,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ArrowLeft, Car, FileText, Landmark, ShieldCheck, Clock } from "lucide-react";
 
-export default function PartnerReviewPage({ params }: { params: { partnerId: string } }) {
-  const { partnerId } = params;
+export default function PartnerReviewPage({ params }: { params: Promise<{ partnerId: string }> }) {
+  const { partnerId } = React.use(params);
   const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

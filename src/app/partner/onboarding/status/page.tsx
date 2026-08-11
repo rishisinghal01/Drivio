@@ -11,15 +11,19 @@ export default function PartnerStatusHub() {
     const [step, setStep] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const [error, setError] = useState(false);
+
     const fetchStatus = async () => {
         try {
             setLoading(true);
+            setError(false);
             const { data } = await axios.get("/api/partner/status");
             if (data) {
                 setStep(data.step);
             }
         } catch (error) {
             console.error("Failed to fetch status");
+            setError(true);
         } finally {
             setLoading(false);
         }
@@ -31,10 +35,19 @@ export default function PartnerStatusHub() {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading && step === null) {
+    if (loading && step === null && !error) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <p className="text-gray-500 font-medium">Checking your status...</p>
+            </div>
+        );
+    }
+
+    if (error && step === null) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+                <p className="text-gray-500 font-medium">Please Log In to view your onboarding status.</p>
+                <button onClick={() => router.push("/")} className="px-6 py-2 bg-black text-white rounded-lg">Go to Home & Login</button>
             </div>
         );
     }
@@ -190,10 +203,10 @@ export default function PartnerStatusHub() {
                                         <div className="absolute right-1/2 top-6 h-[2px] bg-black -z-10 w-full" />
                                     )}
 
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors duration-300 bg-white
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors duration-300
                                         ${isCompleted ? "border-black bg-black text-white" : ""}
-                                        ${isCurrent ? "border-black text-black" : ""}
-                                        ${isLocked ? "border-gray-200 text-gray-400" : ""}
+                                        ${isCurrent ? "border-black bg-white text-black" : ""}
+                                        ${isLocked ? "border-gray-200 bg-white text-gray-400" : ""}
                                     `}>
                                         {isCompleted ? (
                                             <Check size={20} strokeWidth={3} />

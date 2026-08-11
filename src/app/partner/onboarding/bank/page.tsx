@@ -35,6 +35,7 @@ function Page() {
         setloading(false);
         router.push("/partner/onboarding/status");
     } catch (error:any) {
+        setloading(false);
         seterr(error?.response?.data?.message ?? "Something went wrong");
         console.log(err);
     }

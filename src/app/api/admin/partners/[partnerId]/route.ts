@@ -5,12 +5,14 @@ import Vehicle from "@/models/vehicle.model";
 import PartnerDocs from "@/models/partnerDocs.model";
 import PartnerBank from "@/models/partnerBank.model";
 
-export async function GET(req: Request, { params }: { params: { partnerId: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ partnerId: string }> }) {
   try {
     await connectDb();
-    const { partnerId } = params;
+    const { partnerId } = await params;
+    console.log("Fetching partner ID:", partnerId);
 
     const user = await User.findById(partnerId).select("-password");
+    console.log("User found:", !!user);
     if (!user) {
       return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
     }

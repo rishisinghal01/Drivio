@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { connectdb } from "@/lib/db";
+import connectDb from "@/lib/db";
 import User from "@/models/user.model";
 
 export async function GET() {
   try {
-    await connectdb();
+    await connectDb();
 
     // Fetch partners with pending KYC status
     // Also including users where videoKycStatus is undefined to be safe

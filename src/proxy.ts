@@ -28,11 +28,17 @@ export async function proxy(req:NextRequest) {
 
     const role = session.user?.role;
     if(pathname.startsWith("/admin")){
-       if(role !="admin"){
-               return NextResponse.redirect(new URL("/",req.url))
-
+       if(pathname === "/admin/login") {
+           // Allow access to the login page itself
+           if(role === "admin") {
+               return NextResponse.redirect(new URL("/admin/partners", req.url))
+           }
+           return NextResponse.next();
        }
 
+       if(role !== "admin"){
+               return NextResponse.redirect(new URL("/admin/login", req.url))
+       }
     }
 
     if(pathname.startsWith("/partner")){

@@ -6,15 +6,14 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-export default function AdminKycRoom({ params }: { params: { partnerId: string } }) {
+export default function AdminKycRoom({ params }: { params: Promise<{ partnerId: string }> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [kycStatus, setKycStatus] = useState<"pending" | "completed" | "failed">("pending");
   const [updating, setUpdating] = useState(false);
   const { userData } = useSelector((state: RootState) => state.user);
   
-  // Need to unwrap params in Next.js 15+ if needed, but assuming standard Next.js 13/14 app router
-  const partnerId = params.partnerId;
+  const { partnerId } = React.use(params);
 
   useEffect(() => {
     if (containerRef.current) {

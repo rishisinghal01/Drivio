@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { connectdb } from "@/lib/db";
+import connectDb from "@/lib/db";
 import User from "@/models/user.model";
 
 export async function POST(req: Request) {
   try {
-    await connectdb();
+    await connectDb();
     
     const { partnerId, status } = await req.json();
 

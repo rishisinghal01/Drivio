@@ -27,6 +27,11 @@ function Nav() {
 
   }
   const router = useRouter(); 
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <>
       <motion.div
@@ -72,27 +77,42 @@ function Nav() {
                       >
                         <div className='p-5'>
                           <p className='font-semibold text-lg'>{userData.name}</p>
-                          <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
-                          {userData.role != "partner" && (
-                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl' onClick={()=>router.push("/partner/onboarding/vehicle")} >
+                          <p className='text-xs uppercase text-gray-500 mb-4'>
+                            {userData.role === "partner" && userData.partnerOnboardingStep < 7 ? "ONBOARDING" : userData.role}
+                          </p>
+                          {userData.role !== "partner" && (
+                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>router.push("/partner/onboarding/vehicle")} >
                               <div className='flex -space-x-2'>
                                 <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                                   <Bike size={16} />
-
                                 </div>
                                 <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                                   <Car size={16} />
-
                                 </div>
                                 <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                                   <Truck size={16} />
-
                                 </div>
                               </div>
                               Become a Partner
                               <ChevronRight size={16} className='ml-auto' />
                             </div>
-
+                          )}
+                          {userData.role === "partner" && userData.partnerOnboardingStep < 7 && (
+                            <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>router.push("/partner/onboarding/status")} >
+                              <div className='flex -space-x-2'>
+                                <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                                  <Bike size={16} />
+                                </div>
+                                <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                                  <Car size={16} />
+                                </div>
+                                <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                                  <Truck size={16} />
+                                </div>
+                              </div>
+                              Continue Onboarding
+                              <ChevronRight size={16} className='ml-auto' />
+                            </div>
                           )}
 
                           <button className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2' onClick={handlelogout}>
@@ -202,29 +222,46 @@ function Nav() {
 
               <div className='p-5'>
                 <p className='font-semibold text-lg'>{userData.name}</p>
-                <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
-                {userData.role != "partner" && (
-                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl' onClick={()=>{router.push("/partner/onboarding/vehicle")
+                <p className='text-xs uppercase text-gray-500 mb-4'>
+                  {userData.role === "partner" && userData.partnerOnboardingStep < 7 ? "ONBOARDING" : userData.role}
+                </p>
+                {userData.role !== "partner" && (
+                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/partner/onboarding/vehicle")
                     console.log("clicked")
                   }}>
                     <div className='flex -space-x-2'>
                       <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                         <Bike size={16} />
-
                       </div>
                       <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                         <Car size={16} />
-
                       </div>
                       <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
                         <Truck size={16} />
-
                       </div>
                     </div>
                     Become a Partner
                     <ChevronRight size={16} className='ml-auto' />
                   </div>
-
+                )}
+                {userData.role === "partner" && userData.partnerOnboardingStep < 7 && (
+                  <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer' onClick={()=>{router.push("/partner/onboarding/status")
+                    console.log("clicked")
+                  }}>
+                    <div className='flex -space-x-2'>
+                      <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                        <Bike size={16} />
+                      </div>
+                      <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                        <Car size={16} />
+                      </div>
+                      <div className='w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>
+                        <Truck size={16} />
+                      </div>
+                    </div>
+                    Continue Onboarding
+                    <ChevronRight size={16} className='ml-auto' />
+                  </div>
                 )}
 
                 <button className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2' onClick={handlelogout}>
