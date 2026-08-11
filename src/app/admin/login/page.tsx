@@ -60,7 +60,7 @@ export default function AdminLogin() {
             <input
               type="email"
               required
-              placeholder="admin@rydex.com"
+              placeholder="admin@drivio.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-black transition"

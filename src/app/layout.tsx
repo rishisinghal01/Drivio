@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rydex - Smart Vehicle Booking Platform",
-  description: "Rydex ek modern multi-vendor vechile booking platform hai",
+  title: "Drivio - Smart Vehicle Booking Platform",
+  description: "Drivio ek modern multi-vendor vechile booking platform hai",
 };
 
 export default function RootLayout({

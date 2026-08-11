@@ -53,7 +53,7 @@ export default function Sidebar({ role = 'user' }: { role?: 'user' | 'partner' }
                    <UserIcon size={20} />
                 </div>
                 <div>
-                   <h2 className="font-bold text-lg">{role === 'partner' ? 'Driver OS' : 'Rydex'}</h2>
+                   <h2 className="font-bold text-lg">{role === 'partner' ? 'Driver OS' : 'Drivio'}</h2>
                    <p className="text-xs text-gray-400 uppercase tracking-widest">{role}</p>
                 </div>
             </div>

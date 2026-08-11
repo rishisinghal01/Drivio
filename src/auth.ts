@@ -28,11 +28,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const email = credentials.email;
                 const password = credentials.password as string;
 
-                if (email === "admin@rydex.com" && password === process.env.ADMIN_PASSWORD) {
+                if (email === "admin@drivio.com" && password === process.env.ADMIN_PASSWORD) {
                     return {
                         id: "admin-system",
                         name: "System Admin",
-                        email: "admin@rydex.com",
+                        email: "admin@drivio.com",
                         role: "admin",
                     }
                 }

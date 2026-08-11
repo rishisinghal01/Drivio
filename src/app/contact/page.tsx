@@ -31,7 +31,7 @@ export default async function ContactPage() {
                 </div>
                 <div>
                     <h3 className="font-bold text-gray-900">Phone Support</h3>
-                    <p className="text-gray-500 text-sm">1-800-RYDEX-HELP</p>
+                    <p className="text-gray-500 text-sm">1-800-DRIVIO-HELP</p>
                 </div>
             </div>
             
@@ -41,7 +41,7 @@ export default async function ContactPage() {
                 </div>
                 <div>
                     <h3 className="font-bold text-gray-900">Email Us</h3>
-                    <p className="text-gray-500 text-sm">support@rydex.com</p>
+                    <p className="text-gray-500 text-sm">support@drivio.com</p>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@ export default async function ContactPage() {
       
       {/* Footer */}
       <footer className="mt-auto py-8 text-center text-gray-400 text-sm">
-        <p>© {new Date().getFullYear()} Rydex Technologies. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Drivio Technologies. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -15,7 +15,7 @@ export default async function AboutPage() {
       <div className="bg-black text-white pt-24 pb-16 px-6 rounded-b-[40px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_white_0%,_transparent_100%)]"></div>
         <div className="relative z-10 max-w-2xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-4">About Rydex</h1>
+          <h1 className="text-4xl font-bold mb-4">About Drivio</h1>
           <p className="text-gray-400 text-lg">Revolutionizing the way you commute, one ride at a time.</p>
         </div>
       </div>
@@ -25,7 +25,7 @@ export default async function AboutPage() {
         <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Our Mission</h2>
           <p className="text-gray-600 mb-8 leading-relaxed">
-            At Rydex, our mission is to provide safe, reliable, and affordable transportation for everyone. 
+            At Drivio, our mission is to provide safe, reliable, and affordable transportation for everyone. 
             We believe that getting from point A to point B should be a seamless experience, whether you're 
             commuting to work, heading to the airport, or exploring a new city.
           </p>
@@ -60,7 +60,7 @@ export default async function AboutPage() {
       
       {/* Footer */}
       <footer className="mt-auto py-8 text-center text-gray-400 text-sm">
-        <p>© {new Date().getFullYear()} Rydex Technologies. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Drivio Technologies. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -106,7 +106,7 @@ export default function BookRidePage() {
       {step === 1 && (
         <div className="absolute inset-0 z-0 bg-gray-50 flex items-center justify-center">
             <div className="hidden md:flex flex-col items-center opacity-20">
-               <div className="text-6xl font-bold tracking-widest mb-4">RYDEX</div>
+               <div className="text-6xl font-bold tracking-widest mb-4">DRIVIO</div>
                <p className="text-xl font-medium uppercase tracking-widest">Smart Vehicle Booking</p>
             </div>
         </div>

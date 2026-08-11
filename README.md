@@ -1,15 +1,15 @@
 <div align="center">
-  <img src="public/logo.png" alt="Rydex Logo" width="100"/>
-  <h1>🚕 Rydex - The Next-Gen Ride Hailing Platform</h1>
+  <img src="public/logo.png" alt="Drivio Logo" width="100"/>
+  <h1>🚕 Drivio - The Next-Gen Ride Hailing Platform</h1>
   <p>A full-stack, enterprise-grade ride-hailing mobility platform featuring Real-Time GPS Tracking, Razorpay Payments, Multi-Step KYC, and Google OAuth.</p>
 </div>
 
 ---
 
-## 🌟 Why Rydex is Built Differently
-Rydex isn't just another mobility app. It is a highly complex, robust, full-stack application that handles real-world state transitions, background GPS tracking, secure OTP handshakes, and live financial transactions.  
+## 🌟 Why Drivio is Built Differently
+Drivio isn't just another mobility app. It is a highly complex, robust, full-stack application that handles real-world state transitions, background GPS tracking, secure OTP handshakes, and live financial transactions.  
 
-Whether you are a rider looking for a cab, or a partner joining the fleet, Rydex delivers a seamless, native-like web experience.
+Whether you are a rider looking for a cab, or a partner joining the fleet, Drivio delivers a seamless, native-like web experience.
 
 ## ✨ Core Features
 
@@ -38,7 +38,7 @@ Whether you are a rider looking for a cab, or a partner joining the fleet, Rydex
   - *How it works:* It mocks the GPS coordinates, perfectly iterating through the actual road polyline arrays to animate the car moving smoothly on the map across both User and Partner screens!
 
 ### 👑 5. Admin Portal
-- Dedicated `admin@rydex.com` portal to monitor fleet growth, track total platform revenue, and approve pending Partner KYC applications.
+- Dedicated `admin@drivio.com` portal to monitor fleet growth, track total platform revenue, and approve pending Partner KYC applications.
 
 ---
 
@@ -67,8 +67,8 @@ Whether you are a rider looking for a cab, or a partner joining the fleet, Rydex
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/rydex.git
-cd rydex
+git clone https://github.com/yourusername/drivio.git
+cd drivio
 npm install
 ```
 

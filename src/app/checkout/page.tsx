@@ -83,7 +83,7 @@ export default function CheckoutPage() {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
             amount: orderRes.data.order.amount,
             currency: "INR",
-            name: "Rydex",
+            name: "Drivio",
             description: "Ride Payment",
             order_id: orderRes.data.order.id,
             handler: async function (response: any) {
